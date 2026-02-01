@@ -80,6 +80,10 @@ body {
 
 /* Responsive design */
 @media (max-width: 768px) {
+  .title-overlay {
+    top: 10px;
+  }
+  
   .title-overlay h1 {
     font-size: 2rem;
   }
@@ -92,10 +96,16 @@ body {
     bottom: 10px;
     font-size: 0.8rem;
     padding: 10px 20px;
+    max-width: 90%;
   }
 }
 
 @media (max-width: 480px) {
+  .title-overlay {
+    top: 10px;
+    padding: 0 10px;
+  }
+  
   .title-overlay h1 {
     font-size: 1.8rem;
   }
@@ -105,7 +115,13 @@ body {
   }
   
   .instructions {
-    display: none; /* Hide instructions on very small screens */
+    bottom: 80px; /* Above mobile controls */
+    font-size: 0.75rem;
+    padding: 8px 16px;
+    left: 10px;
+    right: 10px;
+    transform: none;
+    max-width: none;
   }
 }
 

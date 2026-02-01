@@ -68,6 +68,10 @@ export interface AppState {
 
   // Reset functionality
   resetSimulation: () => void;
+  
+  // Performance monitoring
+  showPerformanceWarning: boolean;
+  setShowPerformanceWarning: (show: boolean) => void;
 }
 
 export const useStore = create<AppState>((set) => ({
@@ -141,6 +145,10 @@ export const useStore = create<AppState>((set) => ({
     set({ isPlaying: false });
     setTimeout(() => set({ isPlaying: true }), 100);
   },
+  
+  // Performance monitoring
+  showPerformanceWarning: false,
+  setShowPerformanceWarning: (show) => set({ showPerformanceWarning: show }),
 }));
 
 // Predefined presets for different systems

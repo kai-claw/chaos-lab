@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useStore, PRESETS, type ChaosSystem } from '../store/useStore';
 import './Controls.css';
 
 export const Controls: React.FC = () => {
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const {
     currentSystem,
     setCurrentSystem,
@@ -206,8 +207,18 @@ export const Controls: React.FC = () => {
   };
 
   return (
-    <div className="controls">
-      <div className="control-section">
+    <div className={`controls ${isCollapsed ? 'collapsed' : ''}`}>
+      <button 
+        className="controls-toggle"
+        onClick={() => setIsCollapsed(!isCollapsed)}
+        title={isCollapsed ? "Show Controls" : "Hide Controls"}
+      >
+        {isCollapsed ? '⚙️' : '✕'}
+      </button>
+      
+      {!isCollapsed && (
+        <>
+          <div className="control-section">
         <h3>Chaos System</h3>
         <select 
           value={currentSystem} 
@@ -247,7 +258,14 @@ export const Controls: React.FC = () => {
         </div>
         
         <div className="slider-group">
-          <label>Trail Length: {trailLength}</label>
+          <label>
+            Trail Length: {trailLength}
+            {trailLength > 3000 && (
+              <span style={{ color: '#ff9999', fontSize: '12px' }}>
+                {' '}(High - may impact performance)
+              </span>
+            )}
+          </label>
           <input
             type="range"
             min="100"
@@ -303,6 +321,8 @@ export const Controls: React.FC = () => {
       </div>
 
       {renderSystemControls()}
+        </>
+      )}
     </div>
   );
 };

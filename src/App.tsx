@@ -1,6 +1,7 @@
 import { Scene } from './components/Scene';
 import { Controls } from './components/Controls';
 import { InfoPanel } from './components/InfoPanel';
+import { QuickStart } from './components/QuickStart';
 import './App.css';
 
 function App() {
@@ -9,6 +10,7 @@ function App() {
       <Scene />
       <InfoPanel />
       <Controls />
+      <QuickStart />
       
       {/* Title overlay */}
       <div className="title-overlay">
@@ -19,7 +21,8 @@ function App() {
       {/* Instructions overlay */}
       <div className="instructions">
         <p>
-          <strong>Mouse:</strong> Left drag to rotate • Scroll to zoom • Right drag to pan
+          <strong>Mouse:</strong> Left drag to rotate • Scroll to zoom • Right drag to pan<br />
+          <strong>Touch:</strong> Drag to rotate • Pinch to zoom • Two fingers to pan
         </p>
       </div>
     </div>

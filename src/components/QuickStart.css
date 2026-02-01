@@ -1,0 +1,176 @@
+.quick-start-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  backdrop-filter: blur(5px);
+}
+
+.quick-start-modal {
+  width: 90%;
+  max-width: 500px;
+  background: rgba(20, 20, 30, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  padding: 0;
+  color: white;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(20px);
+  animation: slideIn 0.4s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.quick-start-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 24px 16px 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.quick-start-header h2 {
+  margin: 0;
+  color: #88ccff;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.quick-start-close {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 20px;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.quick-start-close:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.quick-start-content {
+  padding: 24px;
+}
+
+.quick-start-content p {
+  margin: 0 0 24px 0;
+  line-height: 1.6;
+  color: #cccccc;
+  font-size: 16px;
+}
+
+.quick-start-progress {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.progress-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.progress-dot.active {
+  background: #88ccff;
+  box-shadow: 0 0 8px rgba(136, 204, 255, 0.5);
+}
+
+.quick-start-actions {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px 24px 24px 24px;
+  gap: 12px;
+}
+
+.quick-start-skip,
+.quick-start-next {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex: 1;
+}
+
+.quick-start-skip {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.quick-start-skip:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+}
+
+.quick-start-next {
+  background: linear-gradient(135deg, #88ccff, #aaffaa);
+  color: #001122;
+  border: none;
+}
+
+.quick-start-next:hover {
+  background: linear-gradient(135deg, #99ddff, #bbffbb);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(136, 204, 255, 0.3);
+}
+
+/* Responsive design */
+@media (max-width: 600px) {
+  .quick-start-modal {
+    width: 95%;
+    margin: 20px;
+  }
+  
+  .quick-start-header {
+    padding: 20px 20px 12px 20px;
+  }
+  
+  .quick-start-header h2 {
+    font-size: 18px;
+  }
+  
+  .quick-start-content {
+    padding: 20px;
+  }
+  
+  .quick-start-content p {
+    font-size: 15px;
+  }
+  
+  .quick-start-actions {
+    padding: 12px 20px 20px 20px;
+    flex-direction: column;
+  }
+  
+  .quick-start-skip,
+  .quick-start-next {
+    width: 100%;
+  }
+}
