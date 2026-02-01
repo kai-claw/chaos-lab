@@ -1,73 +1,108 @@
-# React + TypeScript + Vite
+# Chaos Lab 🦋
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+An interactive chaos theory visualizer showcasing the beautiful complexity that emerges from simple mathematical systems.
 
-Currently, two official plugins are available:
+## 🚀 Live Demo
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+**[Visit Chaos Lab](https://kai-claw.github.io/chaos-lab/)**
 
-## React Compiler
+## ✨ Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Chaos Systems
 
-## Expanding the ESLint configuration
+1. **🦋 Lorenz Attractor**
+   - The classic "butterfly" strange attractor discovered by Edward Lorenz
+   - Real-time parameter controls: σ (sigma), ρ (rho), β (beta)
+   - Color-coded trails based on velocity
+   - Demonstrates sensitive dependence on initial conditions
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+2. **🌀 Rössler Attractor**
+   - Otto Rössler's elegant chaotic system
+   - Parameter controls: a, b, c
+   - Different topology from the Lorenz attractor
+   - Shows how simple equations can create complex behavior
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+3. **⚖️ Double Pendulum**
+   - Classical mechanics meets chaos theory
+   - Physics simulation with adjustable masses, lengths, and gravity
+   - Trace the chaotic path of the second pendulum tip
+   - Demonstrates how everyday systems can be chaotic
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### Interactive Features
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- **🎛️ Real-time Controls**: Adjust parameters on the fly and watch the system respond
+- **🔄 Side-by-Side Mode**: Run two instances with slightly different initial conditions to see the butterfly effect in action
+- **⏸️ Play/Pause & Speed Control**: Control the simulation speed from 0.1x to 5x
+- **🎨 Beautiful Trails**: Configurable trail lengths with gradient coloring
+- **📚 Educational Info Panels**: Learn about each system and what makes it chaotic
+- **🎯 Presets**: Quick access to interesting parameter combinations like "Classic Lorenz", "Edge of Chaos", and "Period Doubling"
+- **🌐 3D Camera Controls**: Orbit around 3D attractors with mouse controls
+
+## 🛠️ Built With
+
+- **React 19** + **TypeScript** - Modern UI framework with type safety
+- **Vite** - Lightning-fast development and build tool  
+- **Three.js** + **React Three Fiber** - 3D graphics and WebGL rendering
+- **React Three Drei** - Useful helpers and abstractions
+- **Zustand** - Lightweight state management
+
+## 🎓 Educational Value
+
+Chaos Lab demonstrates key concepts in chaos theory:
+
+- **Sensitive Dependence on Initial Conditions**: Small changes lead to dramatically different outcomes
+- **Strange Attractors**: Complex, non-repeating patterns that systems evolve towards  
+- **Deterministic Chaos**: Predictable equations can produce unpredictable behavior
+- **The Butterfly Effect**: How tiny variations can have massive consequences
+- **Nonlinear Dynamics**: When the whole is more complex than the sum of its parts
+
+## 🔧 Development
+
+```bash
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+
+# Build for production
+npm run build
+
+# Preview production build
+npm run preview
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🎯 Usage Tips
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+1. **Start with Presets**: Try the built-in presets to see interesting behaviors
+2. **Use Side-by-Side Mode**: Enable this to see the butterfly effect in real time
+3. **Adjust Trail Length**: Longer trails show the full attractor shape, shorter trails show current motion
+4. **Experiment with Parameters**: Small changes can lead to dramatically different behaviors
+5. **Try Different Speeds**: Slow down to observe details, speed up to see long-term patterns
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 🧮 Mathematical Background
+
+### Lorenz System
 ```
+dx/dt = σ(y - x)
+dy/dt = x(ρ - z) - y  
+dz/dt = xy - βz
+```
+
+### Rössler System
+```
+dx/dt = -y - z
+dy/dt = x + ay
+dz/dt = b + z(x - c)
+```
+
+### Double Pendulum
+Complex coupled differential equations governing the motion of two connected pendulums, leading to chaotic dynamics for certain parameter ranges.
+
+## 📄 License
+
+MIT License - feel free to use this for educational purposes!
+
+---
+
+*"Chaos: When the present determines the future, but the approximate present does not approximately determine the future." - Edward Lorenz*
