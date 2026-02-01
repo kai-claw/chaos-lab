@@ -1,0 +1,136 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow: hidden;
+  background: #000010;
+}
+
+.app {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.title-overlay {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  color: white;
+  z-index: 100;
+  pointer-events: none;
+}
+
+.title-overlay h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0;
+  background: linear-gradient(135deg, #88ccff, #aaffaa, #ffcc88);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 0 20px rgba(136, 204, 255, 0.3);
+}
+
+.title-overlay p {
+  font-size: 1.1rem;
+  margin: 8px 0 0 0;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 300;
+  letter-spacing: 0.5px;
+}
+
+.instructions {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.9rem;
+  z-index: 100;
+  pointer-events: none;
+  background: rgba(0, 0, 16, 0.5);
+  padding: 12px 24px;
+  border-radius: 20px;
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.instructions strong {
+  color: #88ccff;
+}
+
+/* Loading animation for when components are loading */
+.loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 1.2rem;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .title-overlay h1 {
+    font-size: 2rem;
+  }
+  
+  .title-overlay p {
+    font-size: 1rem;
+  }
+  
+  .instructions {
+    bottom: 10px;
+    font-size: 0.8rem;
+    padding: 10px 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .title-overlay h1 {
+    font-size: 1.8rem;
+  }
+  
+  .title-overlay p {
+    font-size: 0.9rem;
+  }
+  
+  .instructions {
+    display: none; /* Hide instructions on very small screens */
+  }
+}
+
+/* Smooth transitions */
+* {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+/* Hide elements that might interfere with the visualization */
+canvas {
+  outline: none;
+}
+
+/* Custom selection styling */
+::selection {
+  background: rgba(136, 204, 255, 0.3);
+}
+
+::-moz-selection {
+  background: rgba(136, 204, 255, 0.3);
+}
+
+/* Ensure the app takes full viewport */
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
