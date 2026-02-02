@@ -170,7 +170,7 @@ function App() {
       {/* Instructions overlay — warmer language */}
       <div className={`instructions ${uiReady ? 'visible' : ''}`} aria-hidden="true">
         <p>
-          Drag to explore · Scroll to dive deeper · Right-drag to drift
+          Drag to explore · Scroll to dive deeper · Press <kbd>H</kbd> for shortcuts
         </p>
       </div>
     </div>

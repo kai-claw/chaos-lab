@@ -1,0 +1,24 @@
+{
+  "name": "Chaos Lab — Interactive Chaos Theory Visualizer",
+  "short_name": "Chaos Lab",
+  "description": "Explore the beauty of chaos theory with interactive 3D visualizations of strange attractors, the butterfly effect, and nonlinear dynamics.",
+  "start_url": "/chaos-lab/",
+  "display": "standalone",
+  "background_color": "#000010",
+  "theme_color": "#88ccff",
+  "orientation": "any",
+  "categories": ["education", "entertainment", "science"],
+  "icons": [
+    {
+      "src": "/chaos-lab/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/chaos-lab/og-preview.png",
+      "sizes": "1200x630",
+      "type": "image/png"
+    }
+  ]
+}

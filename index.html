@@ -2,28 +2,123 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/chaos-lab/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Chaos Lab — Interactive Chaos Theory Visualizer</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/chaos-lab/favicon.svg" />
+    <link rel="alternate icon" type="image/svg+xml" href="/chaos-lab/vite.svg" />
+    <link rel="apple-touch-icon" href="/chaos-lab/og-preview.png" />
+
+    <!-- SEO -->
     <meta name="description" content="Explore the beauty of chaos theory with interactive 3D visualizations of Lorenz &amp; Rössler attractors, double pendulums, bifurcation diagrams, and the butterfly effect." />
+    <meta name="keywords" content="chaos theory, Lorenz attractor, Rössler attractor, double pendulum, butterfly effect, strange attractor, nonlinear dynamics, interactive visualization, 3D, WebGL, React" />
+    <meta name="author" content="Kai Claw" />
+    <meta name="theme-color" content="#88ccff" />
+    <link rel="canonical" href="https://kai-claw.github.io/chaos-lab/" />
+
+    <!-- PWA -->
+    <link rel="manifest" href="/chaos-lab/manifest.json" />
 
     <!-- OpenGraph -->
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Chaos Lab" />
     <meta property="og:title" content="Chaos Lab — Interactive Chaos Theory Visualizer" />
     <meta property="og:description" content="Explore Lorenz attractors, Rössler systems, double pendulums, Lyapunov exponents, and the butterfly effect in real-time 3D." />
     <meta property="og:url" content="https://kai-claw.github.io/chaos-lab/" />
     <meta property="og:image" content="https://kai-claw.github.io/chaos-lab/og-preview.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Chaos Lab — Lorenz attractor visualization with glowing trails in 3D space" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Chaos Lab — Interactive Chaos Theory Visualizer" />
     <meta name="twitter:description" content="Explore the butterfly effect, strange attractors, and chaos theory in interactive 3D." />
     <meta name="twitter:image" content="https://kai-claw.github.io/chaos-lab/og-preview.png" />
+    <meta name="twitter:image:alt" content="Chaos Lab — Lorenz attractor visualization with glowing trails in 3D space" />
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Chaos Lab",
+      "description": "Interactive chaos theory visualizer featuring Lorenz attractors, Rössler systems, double pendulums, and the butterfly effect in real-time 3D.",
+      "url": "https://kai-claw.github.io/chaos-lab/",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "Any",
+      "browserRequirements": "Requires WebGL support",
+      "image": "https://kai-claw.github.io/chaos-lab/og-preview.png",
+      "author": {
+        "@type": "Person",
+        "name": "Kai Claw",
+        "url": "https://github.com/kai-claw"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "keywords": "chaos theory, Lorenz attractor, butterfly effect, strange attractor, nonlinear dynamics"
+    }
+    </script>
+
+    <!-- Loading spinner styles (shown before React hydrates) -->
+    <style>
+      body { margin: 0; background: #000010; overflow: hidden; }
+      .app-loader {
+        position: fixed; inset: 0;
+        display: flex; flex-direction: column;
+        align-items: center; justify-content: center;
+        background: #000010; z-index: 99999;
+        transition: opacity 0.6s ease;
+      }
+      .app-loader.fade-out { opacity: 0; pointer-events: none; }
+      .loader-butterfly {
+        width: 48px; height: 48px;
+        animation: loaderFloat 2s ease-in-out infinite;
+      }
+      .loader-text {
+        margin-top: 16px;
+        font-family: system-ui, -apple-system, sans-serif;
+        font-size: 14px; font-weight: 500;
+        color: rgba(136, 204, 255, 0.7);
+        letter-spacing: 2px; text-transform: uppercase;
+        animation: loaderPulse 2s ease-in-out infinite;
+      }
+      @keyframes loaderFloat {
+        0%, 100% { transform: translateY(0) scale(1); }
+        50% { transform: translateY(-8px) scale(1.05); }
+      }
+      @keyframes loaderPulse {
+        0%, 100% { opacity: 0.5; }
+        50% { opacity: 1; }
+      }
+    </style>
   </head>
   <body>
+    <!-- Loading state (removed by React on mount) -->
+    <div id="app-loader" class="app-loader" aria-label="Loading Chaos Lab">
+      <svg class="loader-butterfly" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <path d="M32 28 C26 18, 10 8, 8 20 C6 30, 18 36, 32 32" fill="#88ccff" opacity="0.8"/>
+        <path d="M32 28 C38 18, 54 8, 56 20 C58 30, 46 36, 32 32" fill="#aaffaa" opacity="0.8"/>
+        <ellipse cx="32" cy="32" rx="2" ry="8" fill="#fff" opacity="0.8"/>
+      </svg>
+      <div class="loader-text">Initializing chaos…</div>
+    </div>
+
     <div id="root"></div>
+
+    <noscript>
+      <div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#000010;color:#88ccff;font-family:system-ui,sans-serif;text-align:center;padding:20px;">
+        <div>
+          <h1 style="font-size:2rem;margin-bottom:12px;">🦋 Chaos Lab</h1>
+          <p style="color:rgba(255,255,255,0.6);max-width:400px;">This interactive visualization requires JavaScript and WebGL to run. Please enable JavaScript in your browser settings.</p>
+        </div>
+      </div>
+    </noscript>
+
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

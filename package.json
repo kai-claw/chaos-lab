@@ -1,8 +1,26 @@
 {
   "name": "chaos-lab",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "Interactive chaos theory visualizer — Lorenz attractors, Rössler systems, double pendulums, and the butterfly effect in real-time 3D",
   "type": "module",
+  "homepage": "https://kai-claw.github.io/chaos-lab/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kai-claw/chaos-lab.git"
+  },
+  "license": "MIT",
+  "author": "Kai Claw",
+  "keywords": [
+    "chaos-theory",
+    "lorenz-attractor",
+    "butterfly-effect",
+    "three.js",
+    "react",
+    "webgl",
+    "visualization",
+    "interactive"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",

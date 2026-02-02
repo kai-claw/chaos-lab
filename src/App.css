@@ -227,6 +227,19 @@ body {
   50% { border-color: rgba(136, 204, 255, 0.2); }
 }
 
+.instructions kbd {
+  display: inline-block;
+  padding: 1px 6px;
+  font-size: 0.7rem;
+  font-family: 'Courier New', Consolas, monospace;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+  color: rgba(136, 204, 255, 0.9);
+  vertical-align: baseline;
+  line-height: 1.4;
+}
+
 /* ─── Responsive ─── */
 @media (max-width: 768px) {
   .title-overlay {

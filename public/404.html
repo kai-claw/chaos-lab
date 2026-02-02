@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Chaos Lab</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chaos Lab — Redirecting</title>
+  <meta name="theme-color" content="#88ccff">
   <script>
-    // GitHub Pages SPA redirect — preserves path + hash
+    // GitHub Pages SPA redirect — preserves path + hash for client-side routing
     var pathSegmentsToKeep = 1;
     var l = window.location;
     l.replace(
@@ -16,6 +18,16 @@
       l.hash
     );
   </script>
+  <style>
+    body { margin: 0; background: #000010; display: flex; align-items: center; justify-content: center; height: 100vh; color: rgba(136,204,255,0.7); font-family: system-ui, sans-serif; }
+  </style>
 </head>
-<body></body>
+<body>
+  <noscript>
+    <div style="text-align:center;padding:20px;">
+      <h1 style="color:#88ccff;">🦋 Chaos Lab</h1>
+      <p>Redirecting to <a href="/chaos-lab/" style="color:#aaffaa;">Chaos Lab</a>…</p>
+    </div>
+  </noscript>
+</body>
 </html>
