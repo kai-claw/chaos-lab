@@ -32,8 +32,8 @@
 }
 
 @keyframes helpSlideIn {
-  from { transform: translateY(-12px) scale(0.97); opacity: 0; }
-  to { transform: translateY(0) scale(1); opacity: 1; }
+  from { transform: translateY(12px) scale(0.97); opacity: 0; filter: blur(4px); }
+  to { transform: translateY(0) scale(1); opacity: 1; filter: blur(0); }
 }
 
 .help-header {
