@@ -22,8 +22,6 @@ export const ParameterSpace: React.FC = () => {
   const animFrameRef = useRef(0);
   const [computing, setComputing] = useState(false);
   const [progress, setProgress] = useState(0);
-  const currentParamsRef = useRef<{ x: number; y: number } | null>(null);
-
   const store = useStore.getState();
 
   // Define parameter ranges per system
@@ -60,8 +58,9 @@ export const ParameterSpace: React.FC = () => {
     const canvas = canvasRef.current;
     const config = getConfig();
     if (!canvas || !config) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    const maybeCtx = canvas.getContext('2d');
+    if (!maybeCtx) return;
+    const ctx: CanvasRenderingContext2D = maybeCtx;
 
     const W = canvas.width;
     const H = canvas.height;

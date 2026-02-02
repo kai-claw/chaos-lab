@@ -26,8 +26,9 @@ export const BifurcationDiagram: React.FC = () => {
   const computeDiagram = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    const maybeCtx = canvas.getContext('2d');
+    if (!maybeCtx) return;
+    const ctx: CanvasRenderingContext2D = maybeCtx;
 
     const W = canvas.width;
     const H = canvas.height;

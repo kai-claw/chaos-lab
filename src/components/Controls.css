@@ -458,3 +458,40 @@
   outline: 2px solid var(--accent, #88ccff);
   outline-offset: 2px;
 }
+
+/* ─── Analysis Buttons ─── */
+.analysis-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.analysis-btn {
+  padding: 6px 8px;
+  border: 1px solid var(--panel-border, rgba(255,255,255,0.1));
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-color, #ccc);
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.analysis-btn:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: var(--accent, #88ccff);
+}
+
+.analysis-btn.active {
+  background: rgba(136, 204, 255, 0.15);
+  border-color: var(--accent, #88ccff);
+  color: var(--accent, #88ccff);
+  font-weight: 600;
+}
+
+.analysis-btn:focus-visible {
+  outline: 2px solid var(--accent, #88ccff);
+  outline-offset: 2px;
+}

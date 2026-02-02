@@ -2,7 +2,7 @@ import React, { useRef, useMemo, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
-interface GradientTrailProps {
+export interface GradientTrailProps {
   /** Array of Vector3 points (can be raw system points) */
   points: THREE.Vector3[];
   hueStart: number;
@@ -12,6 +12,8 @@ interface GradientTrailProps {
   /** Whether to zero-out z (for 2D systems like double pendulum) */
   flatZ?: boolean;
   glowIntensity?: number;
+  /** Visual line width (currently decorative — Three.js line width is 1px on most GPUs) */
+  lineWidth?: number;
 }
 
 /** Maximum points the trail buffer can hold */

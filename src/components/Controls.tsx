@@ -342,6 +342,47 @@ export const Controls: React.FC = () => {
 
           {/* System params */}
           {renderSystemControls()}
+
+          {/* Analysis Tools */}
+          {currentSystem !== 'doublePendulum' && (
+            <div className="control-section">
+              <h3>🔬 Analysis</h3>
+              <div className="analysis-buttons">
+                <button
+                  className={`analysis-btn ${showLyapunov ? 'active' : ''}`}
+                  onClick={() => setShowLyapunov(!showLyapunov)}
+                  aria-pressed={showLyapunov}
+                  aria-label="Toggle Lyapunov exponent indicator"
+                >
+                  λ Lyapunov
+                </button>
+                <button
+                  className={`analysis-btn ${showBifurcation ? 'active' : ''}`}
+                  onClick={() => setShowBifurcation(!showBifurcation)}
+                  aria-pressed={showBifurcation}
+                  aria-label="Toggle bifurcation diagram"
+                >
+                  📈 Bifurcation
+                </button>
+                <button
+                  className={`analysis-btn ${showPoincare ? 'active' : ''}`}
+                  onClick={() => setShowPoincare(!showPoincare)}
+                  aria-pressed={showPoincare}
+                  aria-label="Toggle Poincaré section"
+                >
+                  ◎ Poincaré
+                </button>
+                <button
+                  className={`analysis-btn ${showParameterSpace ? 'active' : ''}`}
+                  onClick={() => setShowParameterSpace(!showParameterSpace)}
+                  aria-pressed={showParameterSpace}
+                  aria-label="Toggle parameter space explorer"
+                >
+                  🗺️ Param Space
+                </button>
+              </div>
+            </div>
+          )}
         </>
       )}
     </aside>

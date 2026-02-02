@@ -181,7 +181,7 @@ export const Scene: React.FC = () => {
     >
       <Canvas
         camera={{ position: cam.position, fov: cam.fov }}
-        gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
+        gl={{ antialias: true, alpha: true, powerPreference: 'high-performance', preserveDrawingBuffer: true }}
       >
         <color attach="background" args={[theme.bg]} />
         <fog attach="fog" args={[theme.bg, 30, 60]} />
