@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="wing-l" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#88ccff"/>
+      <stop offset="100%" stop-color="#6699ff"/>
+    </linearGradient>
+    <linearGradient id="wing-r" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#aaffaa"/>
+      <stop offset="100%" stop-color="#ffcc88"/>
+    </linearGradient>
+    <linearGradient id="trail" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#88ccff" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#aaffaa" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#ffcc88" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <!-- Lorenz-inspired butterfly wings -->
+  <path d="M32 28 C26 18, 10 8, 8 20 C6 30, 18 36, 32 32" fill="url(#wing-l)" opacity="0.9"/>
+  <path d="M32 28 C38 18, 54 8, 56 20 C58 30, 46 36, 32 32" fill="url(#wing-r)" opacity="0.9"/>
+  <!-- Body -->
+  <ellipse cx="32" cy="32" rx="2" ry="8" fill="#fff" opacity="0.9"/>
+  <!-- Antennae -->
+  <path d="M31 24 C28 18, 24 14, 22 12" stroke="#88ccff" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+  <path d="M33 24 C36 18, 40 14, 42 12" stroke="#aaffaa" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+  <circle cx="22" cy="12" r="1.5" fill="#88ccff"/>
+  <circle cx="42" cy="12" r="1.5" fill="#aaffaa"/>
+  <!-- Attractor trail hint -->
+  <path d="M12 48 Q22 42, 32 48 Q42 54, 52 48" stroke="url(#trail)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+</svg>
