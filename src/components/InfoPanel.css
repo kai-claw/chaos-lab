@@ -171,3 +171,18 @@
   from { transform: translateX(-100%); opacity: 0; }
   to { transform: translateX(0); opacity: 1; }
 }
+
+/* ─── Accessibility ─── */
+.info-panel .parameter dt {
+  display: inline;
+}
+.info-panel .parameter dd {
+  display: inline;
+  margin: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .info-panel {
+    animation: none;
+  }
+}

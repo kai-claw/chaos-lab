@@ -4,7 +4,7 @@ import { useStore, THEMES } from '../store/useStore';
 export const DivergenceMeter: React.FC = () => {
   const { sideBySideMode, divergence, colorTheme } = useStore();
   const theme = THEMES[colorTheme];
-  
+
   if (!sideBySideMode) return null;
 
   // Map divergence to 0-1 range (log scale)
@@ -14,18 +14,27 @@ export const DivergenceMeter: React.FC = () => {
 
   // Color from green → yellow → red
   const barHue = (1 - normalizedDiv) * 120; // 120=green, 0=red
+  const displayValue = divergence < 0.001 ? divergence.toExponential(2) : divergence.toFixed(3);
 
   return (
-    <div style={{
-      position: 'absolute',
-      bottom: 80,
-      left: '50%',
-      transform: 'translateX(-50%)',
-      zIndex: 200,
-      pointerEvents: 'none',
-      textAlign: 'center',
-      fontFamily: "'Segoe UI', sans-serif",
-    }}>
+    <div
+      role="meter"
+      aria-label="Divergence between the two systems"
+      aria-valuenow={normalizedDiv}
+      aria-valuemin={0}
+      aria-valuemax={1}
+      aria-valuetext={`Divergence: ${displayValue}`}
+      style={{
+        position: 'absolute',
+        bottom: 80,
+        left: '50%',
+        transform: 'translateX(-50%)',
+        zIndex: 200,
+        pointerEvents: 'none',
+        textAlign: 'center',
+        fontFamily: "'Segoe UI', sans-serif",
+      }}
+    >
       <div style={{
         color: theme.textMuted,
         fontSize: '11px',
@@ -61,7 +70,7 @@ export const DivergenceMeter: React.FC = () => {
         fontWeight: 600,
         textShadow: `0 0 10px hsla(${barHue}, 90%, 55%, 0.5)`,
       }}>
-        {divergence < 0.001 ? divergence.toExponential(2) : divergence.toFixed(3)}
+        {displayValue}
       </div>
     </div>
   );

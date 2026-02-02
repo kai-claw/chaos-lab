@@ -27,6 +27,9 @@ export const LyapunovIndicator: React.FC = () => {
   return (
     <div
       className="lyapunov-indicator"
+      role="status"
+      aria-label={`Lyapunov exponent: ${lyapunovExponent.toFixed(3)}, system is ${statusLabel}`}
+      aria-live="polite"
       style={{
         '--panel-bg': theme.panelBg,
         '--panel-border': theme.panelBorder,
@@ -37,14 +40,21 @@ export const LyapunovIndicator: React.FC = () => {
     >
       <div className="lyapunov-header">
         <span className="lyapunov-label">λ (Lyapunov)</span>
-        <span className="lyapunov-status">{statusEmoji} {statusLabel}</span>
+        <span className="lyapunov-status" aria-hidden="true">{statusEmoji} {statusLabel}</span>
       </div>
 
       <div className="lyapunov-value" style={{ color: `hsl(${hue}, 90%, 60%)` }}>
         λ = {lyapunovExponent.toFixed(3)}
       </div>
 
-      <div className="lyapunov-bar-track">
+      <div
+        className="lyapunov-bar-track"
+        role="meter"
+        aria-valuenow={lyapunovExponent}
+        aria-valuemin={-2}
+        aria-valuemax={3}
+        aria-label="Lyapunov exponent"
+      >
         <div
           className="lyapunov-bar-fill"
           style={{
@@ -53,7 +63,7 @@ export const LyapunovIndicator: React.FC = () => {
             boxShadow: `0 0 10px hsla(${hue}, 85%, 50%, 0.6)`,
           }}
         />
-        <div className="lyapunov-bar-zero" />
+        <div className="lyapunov-bar-zero" aria-hidden="true" />
       </div>
 
       <div className="lyapunov-hint">

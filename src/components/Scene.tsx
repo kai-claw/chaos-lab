@@ -6,7 +6,19 @@ import { LorenzAttractor } from './LorenzAttractor';
 import { RosslerAttractor } from './RosslerAttractor';
 import { DoublePendulum } from './DoublePendulum';
 import { Starfield } from './Starfield';
-import { useStore, THEMES } from '../store/useStore';
+import { useStore, THEMES, type ChaosSystem } from '../store/useStore';
+import type { PendulumState } from '../systems/doublePendulum';
+
+/* ─── Types for initial conditions ─── */
+type Vec3Tuple = [number, number, number];
+type InitialCondition = Vec3Tuple | PendulumState;
+
+/* ─── Camera presets per system ─── */
+const CAMERA_SETTINGS: Record<ChaosSystem, { position: Vec3Tuple; fov: number }> = {
+  lorenz:          { position: [10, 10, 10], fov: 60 },
+  rossler:         { position: [8, 8, 8],    fov: 60 },
+  doublePendulum:  { position: [0, 0, 5],    fov: 50 },
+};
 
 /* ─── camera controls ─── */
 const CameraControls: React.FC = () => {
@@ -41,13 +53,15 @@ const DivTracker: React.FC<{
 };
 
 /* ─── system renderer ─── */
-const SystemRenderer: React.FC<{
-  position?: [number, number, number];
-  initialCondition?: any;
+interface SystemRendererProps {
+  position?: Vec3Tuple;
+  initialCondition?: InitialCondition;
   colorHue?: number;
   isSecondary?: boolean;
   lastPosRef?: React.RefObject<THREE.Vector3 | null>;
-}> = ({
+}
+
+const SystemRenderer: React.FC<SystemRendererProps> = ({
   position = [0, 0, 0],
   initialCondition,
   colorHue = 0.6,
@@ -61,7 +75,7 @@ const SystemRenderer: React.FC<{
       return (
         <LorenzAttractor
           position={position}
-          initialCondition={initialCondition || [1, 1, 1]}
+          initialCondition={(initialCondition as Vec3Tuple) || [1, 1, 1]}
           colorHue={colorHue}
           isSecondary={isSecondary}
           lastPosRef={lastPosRef}
@@ -71,7 +85,7 @@ const SystemRenderer: React.FC<{
       return (
         <RosslerAttractor
           position={position}
-          initialCondition={initialCondition || [1, 1, 1]}
+          initialCondition={(initialCondition as Vec3Tuple) || [1, 1, 1]}
           colorHue={colorHue}
           isSecondary={isSecondary}
           lastPosRef={lastPosRef}
@@ -81,7 +95,7 @@ const SystemRenderer: React.FC<{
       return (
         <DoublePendulum
           position={position}
-          initialCondition={initialCondition || { theta1: Math.PI / 2, theta2: Math.PI / 2, omega1: 0, omega2: 0 }}
+          initialCondition={(initialCondition as PendulumState) || { theta1: Math.PI / 2, theta2: Math.PI / 2, omega1: 0, omega2: 0 }}
           colorHue={colorHue}
           isSecondary={isSecondary}
           lastPosRef={lastPosRef}
@@ -157,19 +171,14 @@ const SceneContent: React.FC = () => {
 export const Scene: React.FC = () => {
   const { currentSystem, colorTheme } = useStore();
   const theme = THEMES[colorTheme];
-
-  const getCameraSettings = () => {
-    switch (currentSystem) {
-      case 'lorenz': return { position: [10, 10, 10] as [number, number, number], fov: 60 };
-      case 'rossler': return { position: [8, 8, 8] as [number, number, number], fov: 60 };
-      case 'doublePendulum': return { position: [0, 0, 5] as [number, number, number], fov: 50 };
-      default: return { position: [10, 10, 10] as [number, number, number], fov: 60 };
-    }
-  };
-  const cam = getCameraSettings();
+  const cam = CAMERA_SETTINGS[currentSystem] ?? CAMERA_SETTINGS.lorenz;
 
   return (
-    <div style={{ width: '100vw', height: '100vh', background: theme.bg }}>
+    <div
+      style={{ width: '100vw', height: '100vh', background: theme.bg }}
+      role="img"
+      aria-label={`3D visualization of ${currentSystem === 'lorenz' ? 'Lorenz attractor' : currentSystem === 'rossler' ? 'Rössler attractor' : 'double pendulum'} chaos system`}
+    >
       <Canvas
         camera={{ position: cam.position, fov: cam.fov }}
         gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}

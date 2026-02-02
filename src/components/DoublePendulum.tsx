@@ -22,11 +22,12 @@ export const DoublePendulum: React.FC<DoublePendulumProps> = ({
   lastPosRef,
 }) => {
   const groupRef = useRef<THREE.Group>(null);
-  const { 
+  const {
     isPlaying, speed, trailLength, doublePendulumParams, _resetCounter, colorTheme,
+    showLyapunov, setLyapunovExponent, showPoincare, currentSystem,
   } = useStore();
   const theme = THEMES[colorTheme];
-  
+
   const pendulumSystem = useMemo(() => {
     return new DoublePendulumSystem(initialCondition, doublePendulumParams);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -47,7 +48,21 @@ export const DoublePendulum: React.FC<DoublePendulumProps> = ({
     pendulumSystem.updateParams(doublePendulumParams);
   }, [doublePendulumParams, pendulumSystem]);
 
+  // Expose system for Poincaré access
+  useEffect(() => {
+    if (!isSecondary) {
+      (window as any).__chaosLabSystem = pendulumSystem;
+      (window as any).__chaosLabSystemType = 'doublePendulum';
+    }
+    return () => {
+      if (!isSecondary && (window as any).__chaosLabSystem === pendulumSystem) {
+        (window as any).__chaosLabSystem = null;
+      }
+    };
+  }, [pendulumSystem, isSecondary]);
+
   const scaledPoints = useRef<THREE.Vector3[]>([]);
+  const frameCounter = useRef(0);
 
   useFrame(() => {
     if (!isPlaying) return;
@@ -65,9 +80,17 @@ export const DoublePendulum: React.FC<DoublePendulumProps> = ({
       const last = pts[pts.length - 1];
       (lastPosRef as React.MutableRefObject<THREE.Vector3 | null>).current = new THREE.Vector3(last.x, last.y, 0);
     }
+
+    // Update Lyapunov (throttled)
+    if (!isSecondary && currentSystem === 'doublePendulum' && (showLyapunov || showPoincare)) {
+      frameCounter.current++;
+      if (frameCounter.current % 30 === 0) {
+        setLyapunovExponent(pendulumSystem.lyapunovExponent);
+      }
+    }
   });
 
-  const currentPos = pendulumSystem.positions.length > 0 
+  const currentPos = pendulumSystem.positions.length > 0
     ? pendulumSystem.getCurrentPositions()
     : { p1: { x: 0, y: 0 }, p2: { x: 0, y: 0 } };
 
@@ -77,7 +100,6 @@ export const DoublePendulum: React.FC<DoublePendulumProps> = ({
   const mass1Color = new THREE.Color().setHSL(hStart, 0.8, 0.6);
   const mass2Color = new THREE.Color().setHSL(hStart + 0.1, 0.8, 0.7);
 
-  // Rod endpoints
   const rod1End = [currentPos.p1.x * scale, currentPos.p1.y * scale, 0] as const;
   const rod2End = [currentPos.p2.x * scale, currentPos.p2.y * scale, 0] as const;
 
@@ -90,7 +112,7 @@ export const DoublePendulum: React.FC<DoublePendulumProps> = ({
         lineWidth={1.8}
         glowIntensity={0.4}
       />
-      
+
       {/* Rod 1 */}
       <line>
         <bufferGeometry>
@@ -101,7 +123,7 @@ export const DoublePendulum: React.FC<DoublePendulumProps> = ({
         </bufferGeometry>
         <lineBasicMaterial color={rodColor} linewidth={2} transparent opacity={0.6} />
       </line>
-      
+
       {/* Rod 2 */}
       <line>
         <bufferGeometry>
@@ -112,19 +134,19 @@ export const DoublePendulum: React.FC<DoublePendulumProps> = ({
         </bufferGeometry>
         <lineBasicMaterial color={rodColor} linewidth={2} transparent opacity={0.6} />
       </line>
-      
+
       {/* Pivot */}
       <mesh position={[0, 0, 0]}>
         <sphereGeometry args={[0.03, 12, 12]} />
         <meshBasicMaterial color="#ffffff" transparent opacity={0.7} />
       </mesh>
-      
+
       {/* Mass 1 */}
       <mesh position={[rod1End[0], rod1End[1], rod1End[2]]}>
         <sphereGeometry args={[0.06 * Math.sqrt(doublePendulumParams.mass1), 16, 16]} />
         <meshBasicMaterial color={mass1Color} />
       </mesh>
-      
+
       {/* Mass 2 */}
       <mesh position={[rod2End[0], rod2End[1], rod2End[2]]}>
         <sphereGeometry args={[0.06 * Math.sqrt(doublePendulumParams.mass2), 16, 16]} />

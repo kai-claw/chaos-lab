@@ -9,13 +9,18 @@ const Z_MAX = 300;
 const TRANSIENT = 5000;
 const SAMPLE = 3000;
 const DT = 0.005;
+const BATCH_SIZE = 15;
+const GRID_RHO_STEP = 20;
+const GRID_Z_STEP = 50;
+const LABEL_RHO_STEP = 40;
+const DOT_COLOR = 'rgba(100, 180, 255, 0.35)';
+const DOT_SIZE = 1.5;
 
 export const BifurcationDiagram: React.FC = () => {
   const { showBifurcation, setShowBifurcation, lorenzParams, setLorenzParams, colorTheme, resetSimulation, setCurrentSystem } = useStore();
   const theme = THEMES[colorTheme];
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const overlayRef = useRef<HTMLCanvasElement>(null);
-  const computedRef = useRef(false);
   const animFrameRef = useRef(0);
 
   const computeDiagram = useCallback(() => {
@@ -27,18 +32,17 @@ export const BifurcationDiagram: React.FC = () => {
     const W = canvas.width;
     const H = canvas.height;
 
-    // Dark background
     ctx.fillStyle = '#0a0a18';
     ctx.fillRect(0, 0, W, H);
 
     // Grid lines
     ctx.strokeStyle = 'rgba(255,255,255,0.06)';
     ctx.lineWidth = 1;
-    for (let r = 0; r <= RHO_MAX; r += 20) {
+    for (let r = 0; r <= RHO_MAX; r += GRID_RHO_STEP) {
       const x = (r / RHO_MAX) * W;
       ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
     }
-    for (let z = 0; z <= Z_MAX; z += 50) {
+    for (let z = 0; z <= Z_MAX; z += GRID_Z_STEP) {
       const y = H - (z / Z_MAX) * H;
       ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
     }
@@ -47,10 +51,8 @@ export const BifurcationDiagram: React.FC = () => {
     const sigma = 10;
     const beta = 8 / 3;
 
-    const batchSize = 15;
-
     function computeBatch() {
-      for (let b = 0; b < batchSize && rhoIdx < RHO_STEPS; b++, rhoIdx++) {
+      for (let b = 0; b < BATCH_SIZE && rhoIdx < RHO_STEPS; b++, rhoIdx++) {
         const rho = RHO_MIN + (rhoIdx / RHO_STEPS) * (RHO_MAX - RHO_MIN);
         let x = 1, y = 1, z = 1;
 
@@ -60,7 +62,6 @@ export const BifurcationDiagram: React.FC = () => {
           const dy = x * (rho - z) - y;
           const dz = x * y - beta * z;
           x += dx * DT; y += dy * DT; z += dz * DT;
-          // Stability check
           if (Math.abs(x) > 1e6) { x = 1; y = 1; z = 1; break; }
         }
 
@@ -78,8 +79,8 @@ export const BifurcationDiagram: React.FC = () => {
           if (prevDz > 0 && currDz <= 0 && z > 0 && z < Z_MAX) {
             const px = (rho / RHO_MAX) * W;
             const py = H - (z / Z_MAX) * H;
-            ctx.fillStyle = 'rgba(100, 180, 255, 0.35)';
-            ctx.fillRect(px, py, 1.5, 1.5);
+            ctx.fillStyle = DOT_COLOR;
+            ctx.fillRect(px, py, DOT_SIZE, DOT_SIZE);
           }
           prevDz = currDz;
           prevZ = z;
@@ -89,7 +90,6 @@ export const BifurcationDiagram: React.FC = () => {
       if (rhoIdx < RHO_STEPS) {
         animFrameRef.current = requestAnimationFrame(computeBatch);
       } else {
-        computedRef.current = true;
         drawAxisLabels(ctx, W, H);
       }
     }
@@ -102,20 +102,17 @@ export const BifurcationDiagram: React.FC = () => {
     ctx.font = '11px system-ui, sans-serif';
     ctx.textAlign = 'center';
 
-    // X axis labels (ρ values)
-    for (let r = 0; r <= RHO_MAX; r += 40) {
+    for (let r = 0; r <= RHO_MAX; r += LABEL_RHO_STEP) {
       const x = (r / RHO_MAX) * W;
       ctx.fillText(`${r}`, x, H - 4);
     }
 
-    // Y axis labels (z values)
     ctx.textAlign = 'left';
-    for (let z = 50; z <= Z_MAX; z += 50) {
+    for (let z = GRID_Z_STEP; z <= Z_MAX; z += GRID_Z_STEP) {
       const y = H - (z / Z_MAX) * H;
       ctx.fillText(`${z}`, 4, y + 4);
     }
 
-    // Axis titles
     ctx.fillStyle = 'rgba(255,255,255,0.6)';
     ctx.font = '12px system-ui, sans-serif';
     ctx.textAlign = 'center';
@@ -127,7 +124,6 @@ export const BifurcationDiagram: React.FC = () => {
     ctx.restore();
   };
 
-  // Draw cursor overlay showing current ρ
   const drawOverlay = useCallback(() => {
     const canvas = overlayRef.current;
     if (!canvas) return;
@@ -138,7 +134,6 @@ export const BifurcationDiagram: React.FC = () => {
     const H = canvas.height;
     ctx.clearRect(0, 0, W, H);
 
-    // Current ρ line
     const x = (lorenzParams.rho / RHO_MAX) * W;
     ctx.strokeStyle = 'rgba(255, 100, 100, 0.8)';
     ctx.lineWidth = 2;
@@ -146,7 +141,6 @@ export const BifurcationDiagram: React.FC = () => {
     ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
     ctx.setLineDash([]);
 
-    // Label
     ctx.fillStyle = 'rgba(255, 100, 100, 0.9)';
     ctx.font = 'bold 11px system-ui, sans-serif';
     ctx.textAlign = x > W / 2 ? 'right' : 'left';
@@ -156,11 +150,13 @@ export const BifurcationDiagram: React.FC = () => {
 
   useEffect(() => {
     if (showBifurcation) {
-      computedRef.current = false;
       computeDiagram();
     }
     return () => {
-      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+      if (animFrameRef.current) {
+        cancelAnimationFrame(animFrameRef.current);
+        animFrameRef.current = 0;
+      }
     };
   }, [showBifurcation, computeDiagram]);
 
@@ -168,16 +164,34 @@ export const BifurcationDiagram: React.FC = () => {
     if (showBifurcation) drawOverlay();
   }, [showBifurcation, drawOverlay]);
 
-  const handleClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
+  const rhoFromEvent = (e: { clientX: number }) => {
     const canvas = overlayRef.current;
-    if (!canvas) return;
+    if (!canvas) return null;
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const rho = (x / rect.width) * RHO_MAX;
-    const clampedRho = Math.max(0.1, Math.min(RHO_MAX, rho));
+    return Math.max(0.1, Math.min(RHO_MAX, Math.round(rho * 10) / 10));
+  };
+
+  const jumpToRho = (rho: number) => {
     setCurrentSystem('lorenz');
-    setLorenzParams({ rho: Math.round(clampedRho * 10) / 10 });
+    setLorenzParams({ rho });
     resetSimulation();
+  };
+
+  const handleClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    const rho = rhoFromEvent(e);
+    if (rho !== null) jumpToRho(rho);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      setShowBifurcation(false);
+    } else if (e.key === 'ArrowLeft') {
+      jumpToRho(Math.max(0.1, lorenzParams.rho - 1));
+    } else if (e.key === 'ArrowRight') {
+      jumpToRho(Math.min(RHO_MAX, lorenzParams.rho + 1));
+    }
   };
 
   if (!showBifurcation) return null;
@@ -185,6 +199,10 @@ export const BifurcationDiagram: React.FC = () => {
   return (
     <div
       className="bifurcation-overlay"
+      role="dialog"
+      aria-label="Lorenz bifurcation diagram"
+      aria-modal="false"
+      onKeyDown={handleKeyDown}
       style={{
         '--panel-bg': theme.panelBg,
         '--panel-border': theme.panelBorder,
@@ -194,7 +212,13 @@ export const BifurcationDiagram: React.FC = () => {
     >
       <div className="bifurcation-header">
         <h3>📊 Lorenz Bifurcation Diagram</h3>
-        <button className="bifurcation-close" onClick={() => setShowBifurcation(false)}>✕</button>
+        <button
+          className="bifurcation-close"
+          onClick={() => setShowBifurcation(false)}
+          aria-label="Close bifurcation diagram"
+        >
+          ✕
+        </button>
       </div>
       <div className="bifurcation-canvas-wrap">
         <canvas
@@ -202,6 +226,7 @@ export const BifurcationDiagram: React.FC = () => {
           width={600}
           height={380}
           className="bifurcation-canvas"
+          aria-hidden="true"
         />
         <canvas
           ref={overlayRef}
@@ -209,11 +234,16 @@ export const BifurcationDiagram: React.FC = () => {
           height={380}
           className="bifurcation-canvas-overlay"
           onClick={handleClick}
-          title="Click to set ρ value"
+          role="slider"
+          aria-label={`Rho value selector, current value ${lorenzParams.rho.toFixed(1)}`}
+          aria-valuenow={lorenzParams.rho}
+          aria-valuemin={RHO_MIN}
+          aria-valuemax={RHO_MAX}
+          tabIndex={0}
         />
       </div>
       <p className="bifurcation-hint">
-        Click anywhere on the diagram to jump to that ρ value. The vertical line shows the current ρ.
+        Click or use ← → arrow keys to set ρ value. Press Escape to close.
       </p>
     </div>
   );

@@ -17,10 +17,10 @@ const SYSTEM_INFO: Record<ChaosSystem, {
       'dy/dt = x(ρ - z) - y',
       'dz/dt = xy - βz'
     ],
-    whatMakesChaotic: 'The system is chaotic because small changes in initial conditions lead to drastically different outcomes over time. This is the famous "butterfly effect" - a butterfly flapping its wings in Brazil could theoretically cause a tornado in Texas.',
+    whatMakesChaotic: 'The system is chaotic because small changes in initial conditions lead to drastically different outcomes over time. This is the famous "butterfly effect" — a butterfly flapping its wings in Brazil could theoretically cause a tornado in Texas.',
     parameters: {
-      'σ (sigma)': 'Prandtl number - relates viscosity to thermal conductivity',
-      'ρ (rho)': 'Rayleigh number - measures temperature difference',
+      'σ (sigma)': 'Prandtl number — relates viscosity to thermal conductivity',
+      'ρ (rho)': 'Rayleigh number — measures temperature difference',
       'β (beta)': 'Geometric factor related to the size of convection cells'
     }
   },
@@ -62,10 +62,10 @@ export const InfoPanel: React.FC = () => {
 
   if (!showInfoPanel) {
     return (
-      <button 
+      <button
         className="info-toggle collapsed"
         onClick={() => setShowInfoPanel(true)}
-        title="Show Information"
+        aria-label="Show system information panel"
       >
         ℹ️
       </button>
@@ -75,27 +75,27 @@ export const InfoPanel: React.FC = () => {
   const info = SYSTEM_INFO[currentSystem];
 
   return (
-    <div className="info-panel">
+    <aside className="info-panel" role="complementary" aria-label="System information">
       <div className="info-header">
         <h2>{info.title}</h2>
-        <button 
+        <button
           className="info-close"
           onClick={() => setShowInfoPanel(false)}
-          title="Hide Information"
+          aria-label="Close information panel"
         >
           ✕
         </button>
       </div>
-      
+
       <div className="info-content">
-        <section>
-          <h3>Overview</h3>
+        <section aria-labelledby="info-overview">
+          <h3 id="info-overview">Overview</h3>
           <p>{info.description}</p>
         </section>
-        
-        <section>
-          <h3>Equations</h3>
-          <div className="equations">
+
+        <section aria-labelledby="info-equations">
+          <h3 id="info-equations">Equations</h3>
+          <div className="equations" role="math" aria-label="System equations">
             {info.equations.map((equation, index) => (
               <div key={index} className="equation">
                 {equation}
@@ -103,25 +103,26 @@ export const InfoPanel: React.FC = () => {
             ))}
           </div>
         </section>
-        
-        <section>
-          <h3>What Makes It Chaotic?</h3>
+
+        <section aria-labelledby="info-chaos">
+          <h3 id="info-chaos">What Makes It Chaotic?</h3>
           <p>{info.whatMakesChaotic}</p>
         </section>
-        
-        <section>
-          <h3>Parameters</h3>
-          <div className="parameters">
+
+        <section aria-labelledby="info-params">
+          <h3 id="info-params">Parameters</h3>
+          <dl className="parameters">
             {Object.entries(info.parameters).map(([param, description]) => (
               <div key={param} className="parameter">
-                <strong>{param}:</strong> {description}
+                <dt><strong>{param}</strong></dt>
+                <dd>{description}</dd>
               </div>
             ))}
-          </div>
+          </dl>
         </section>
-        
-        <section>
-          <h3>Tips</h3>
+
+        <section aria-labelledby="info-tips">
+          <h3 id="info-tips">Tips</h3>
           <ul>
             <li>Try the side-by-side mode to see how small changes create big differences</li>
             <li>Experiment with different presets to explore various behaviors</li>
@@ -130,6 +131,6 @@ export const InfoPanel: React.FC = () => {
           </ul>
         </section>
       </div>
-    </div>
+    </aside>
   );
 };

@@ -9,11 +9,12 @@ export const analytics = {
   addPoincarePoint(x: number, y: number) {
     this.poincarePoints.push([x, y]);
     if (this.poincarePoints.length > this.maxPoints) {
-      this.poincarePoints = this.poincarePoints.slice(-this.maxPoints);
+      // In-place splice instead of slice (avoids creating a new array)
+      this.poincarePoints.splice(0, this.poincarePoints.length - this.maxPoints);
     }
   },
 
   clear() {
-    this.poincarePoints = [];
+    this.poincarePoints.length = 0;
   },
 };

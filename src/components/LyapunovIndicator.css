@@ -81,6 +81,15 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .lyapunov-indicator {
+    animation: none;
+  }
+  .lyapunov-bar-fill {
+    transition: none;
+  }
+}
+
 @media (max-width: 768px) {
   .lyapunov-indicator {
     bottom: auto;

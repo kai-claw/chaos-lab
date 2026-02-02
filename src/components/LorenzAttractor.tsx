@@ -22,11 +22,12 @@ export const LorenzAttractor: React.FC<LorenzAttractorProps> = ({
   lastPosRef,
 }) => {
   const groupRef = useRef<THREE.Group>(null);
-  const { 
+  const {
     isPlaying, speed, trailLength, lorenzParams, _resetCounter, colorTheme,
+    showLyapunov, setLyapunovExponent, showPoincare,
   } = useStore();
   const theme = THEMES[colorTheme];
-  
+
   const lorenzSystem = useMemo(() => {
     const initialPos = new THREE.Vector3(...initialCondition);
     return new LorenzSystem(initialPos, lorenzParams);
@@ -42,7 +43,25 @@ export const LorenzAttractor: React.FC<LorenzAttractorProps> = ({
     lorenzSystem.updateParams(lorenzParams);
   }, [lorenzParams, lorenzSystem]);
 
+  // Expose system ref for Poincaré and analysis
+  const systemRef = useRef(lorenzSystem);
+  systemRef.current = lorenzSystem;
+
+  // Store system on window for Poincaré access (only primary)
+  useEffect(() => {
+    if (!isSecondary) {
+      (window as any).__chaosLabSystem = lorenzSystem;
+      (window as any).__chaosLabSystemType = 'lorenz';
+    }
+    return () => {
+      if (!isSecondary && (window as any).__chaosLabSystem === lorenzSystem) {
+        (window as any).__chaosLabSystem = null;
+      }
+    };
+  }, [lorenzSystem, isSecondary]);
+
   const scaledPoints = useRef<THREE.Vector3[]>([]);
+  const frameCounter = useRef(0);
 
   useFrame(() => {
     if (!isPlaying) return;
@@ -61,6 +80,14 @@ export const LorenzAttractor: React.FC<LorenzAttractorProps> = ({
       const last = pts[pts.length - 1];
       (lastPosRef as React.MutableRefObject<THREE.Vector3 | null>).current = last.clone();
     }
+
+    // Update Lyapunov indicator (throttled, only primary)
+    if (!isSecondary && (showLyapunov || showPoincare)) {
+      frameCounter.current++;
+      if (frameCounter.current % 30 === 0) {
+        setLyapunovExponent(lorenzSystem.lyapunovExponent);
+      }
+    }
   });
 
   const hStart = isSecondary ? theme.trailHue2 : theme.trailHue1;
@@ -76,7 +103,7 @@ export const LorenzAttractor: React.FC<LorenzAttractorProps> = ({
         lineWidth={2.5}
         glowIntensity={0.5}
       />
-      
+
       {lorenzSystem.points.length > 0 && (() => {
         const last = lorenzSystem.points[lorenzSystem.points.length - 1];
         return (

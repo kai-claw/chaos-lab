@@ -22,11 +22,12 @@ export const RosslerAttractor: React.FC<RosslerAttractorProps> = ({
   lastPosRef,
 }) => {
   const groupRef = useRef<THREE.Group>(null);
-  const { 
+  const {
     isPlaying, speed, trailLength, rosslerParams, _resetCounter, colorTheme,
+    showLyapunov, setLyapunovExponent, showPoincare, currentSystem,
   } = useStore();
   const theme = THEMES[colorTheme];
-  
+
   const rosslerSystem = useMemo(() => {
     const initialPos = new THREE.Vector3(...initialCondition);
     return new RosslerSystem(initialPos, rosslerParams);
@@ -42,7 +43,21 @@ export const RosslerAttractor: React.FC<RosslerAttractorProps> = ({
     rosslerSystem.updateParams(rosslerParams);
   }, [rosslerParams, rosslerSystem]);
 
+  // Expose system for Poincaré access
+  useEffect(() => {
+    if (!isSecondary) {
+      (window as any).__chaosLabSystem = rosslerSystem;
+      (window as any).__chaosLabSystemType = 'rossler';
+    }
+    return () => {
+      if (!isSecondary && (window as any).__chaosLabSystem === rosslerSystem) {
+        (window as any).__chaosLabSystem = null;
+      }
+    };
+  }, [rosslerSystem, isSecondary]);
+
   const scaledPoints = useRef<THREE.Vector3[]>([]);
+  const frameCounter = useRef(0);
 
   useFrame(() => {
     if (!isPlaying) return;
@@ -60,6 +75,14 @@ export const RosslerAttractor: React.FC<RosslerAttractorProps> = ({
       const last = pts[pts.length - 1];
       (lastPosRef as React.MutableRefObject<THREE.Vector3 | null>).current = last.clone();
     }
+
+    // Update Lyapunov (throttled, only primary and only when rossler is active)
+    if (!isSecondary && currentSystem === 'rossler' && (showLyapunov || showPoincare)) {
+      frameCounter.current++;
+      if (frameCounter.current % 30 === 0) {
+        setLyapunovExponent(rosslerSystem.lyapunovExponent);
+      }
+    }
   });
 
   const hStart = isSecondary ? theme.trailHue2 : theme.trailHue1;
@@ -75,7 +98,7 @@ export const RosslerAttractor: React.FC<RosslerAttractorProps> = ({
         lineWidth={2.5}
         glowIntensity={0.5}
       />
-      
+
       {rosslerSystem.points.length > 0 && (() => {
         const last = rosslerSystem.points[rosslerSystem.points.length - 1];
         return (

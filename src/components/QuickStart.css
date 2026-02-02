@@ -174,3 +174,24 @@
     width: 100%;
   }
 }
+
+/* ─── Reduced Motion ─── */
+@media (prefers-reduced-motion: reduce) {
+  .quick-start-modal {
+    animation: none;
+  }
+  .progress-dot {
+    transition: none;
+  }
+}
+
+/* ─── Focus styles for modal ─── */
+.quick-start-modal:focus {
+  outline: none;
+}
+.quick-start-next:focus-visible,
+.quick-start-skip:focus-visible,
+.quick-start-close:focus-visible {
+  outline: 2px solid #88ccff;
+  outline-offset: 2px;
+}

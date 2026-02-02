@@ -1,0 +1,106 @@
+.paramspace-overlay {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 400;
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 12px;
+  padding: 16px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+  max-width: 540px;
+  animation: paramspaceFadeIn 0.3s ease;
+}
+
+@keyframes paramspaceFadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.paramspace-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.paramspace-header h3 {
+  margin: 0;
+  font-size: 14px;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.paramspace-close {
+  background: none;
+  border: none;
+  color: var(--text);
+  cursor: pointer;
+  font-size: 16px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  opacity: 0.5;
+  transition: opacity 0.2s;
+}
+
+.paramspace-close:hover {
+  opacity: 1;
+}
+
+.paramspace-canvas-wrap {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.paramspace-canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.paramspace-canvas-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+}
+
+.paramspace-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.paramspace-progress-bar {
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.2s ease;
+  box-shadow: 0 0 8px var(--accent);
+}
+
+.paramspace-hint {
+  margin: 8px 0 0;
+  font-size: 11px;
+  color: var(--text);
+  opacity: 0.5;
+  line-height: 1.4;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .paramspace-overlay {
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    max-width: none;
+    padding: 12px;
+  }
+}

@@ -17,6 +17,39 @@ body {
   overflow: hidden;
 }
 
+/* ─── Skip Link (keyboard a11y) ─── */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--accent, #88ccff);
+  color: #000;
+  padding: 8px 16px;
+  border-radius: 0 0 8px 8px;
+  z-index: 9999;
+  font-weight: 700;
+  font-size: 14px;
+  text-decoration: none;
+  transition: top 0.2s ease;
+}
+.skip-link:focus {
+  top: 0;
+}
+
+/* ─── Screen Reader Only ─── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
 /* ─── Title ─── */
 .title-overlay {
   position: absolute;
@@ -44,7 +77,7 @@ body {
 .title-overlay p {
   font-size: 0.85rem;
   margin: 4px 0 0 0;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.6); /* Improved from 0.5 for contrast */
   font-weight: 400;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -57,11 +90,11 @@ body {
   left: 50%;
   transform: translateX(-50%);
   text-align: center;
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(255, 255, 255, 0.55); /* Improved from 0.45 for contrast */
   font-size: 0.78rem;
   z-index: 100;
   pointer-events: none;
-  background: rgba(0, 0, 16, 0.5);
+  background: rgba(0, 0, 16, 0.6); /* Darker bg for better contrast */
   padding: 8px 20px;
   border-radius: 20px;
   backdrop-filter: blur(8px);
@@ -84,13 +117,34 @@ body {
     font-size: 0.7rem;
   }
   .instructions {
-    display: none; /* hidden on mobile — gestures are intuitive */
+    display: none;
   }
 }
 
 @media (max-width: 480px) {
   .title-overlay h1 {
     font-size: 1.4rem;
+  }
+}
+
+/* ─── Very Small Screens (320px) ─── */
+@media (max-width: 360px) {
+  .title-overlay h1 {
+    font-size: 1.2rem;
+  }
+  .title-overlay p {
+    font-size: 0.6rem;
+    letter-spacing: 1px;
+  }
+}
+
+/* ─── Reduced Motion ─── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 

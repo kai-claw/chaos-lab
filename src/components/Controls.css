@@ -405,3 +405,56 @@
     max-height: calc(100vh - 20px);
   }
 }
+
+/* ─── Very Small Screens ─── */
+@media (max-width: 360px) {
+  .controls.mobile {
+    padding: 12px 14px 20px;
+    padding-top: 44px;
+    max-height: 60vh;
+  }
+  .system-tabs {
+    flex-direction: column;
+  }
+  .system-tab {
+    font-size: 11px;
+    min-height: 36px;
+  }
+  .theme-grid {
+    grid-template-columns: 1fr;
+  }
+  .control-section h3 {
+    font-size: 12px;
+  }
+}
+
+/* ─── Reduced Motion ─── */
+@media (prefers-reduced-motion: reduce) {
+  .controls {
+    transition: none;
+  }
+  .play-button:hover, .reset-button:hover {
+    transform: none;
+  }
+  .theme-btn, .preset-chip, .system-tab {
+    transition: none;
+  }
+}
+
+/* ─── Keyboard focus indicators ─── */
+.system-tab:focus-visible,
+.play-button:focus-visible,
+.reset-button:focus-visible,
+.theme-btn:focus-visible,
+.preset-chip:focus-visible {
+  outline: 2px solid var(--accent, #88ccff);
+  outline-offset: 2px;
+}
+.slider-group input[type="range"]:focus-visible {
+  outline: 2px solid var(--accent, #88ccff);
+  outline-offset: 4px;
+}
+.checkbox-group input[type="checkbox"]:focus-visible {
+  outline: 2px solid var(--accent, #88ccff);
+  outline-offset: 2px;
+}
