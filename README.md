@@ -38,13 +38,30 @@ An interactive chaos theory visualizer showcasing the beautiful complexity that 
 - **🎯 Presets**: Quick access to interesting parameter combinations like "Classic Lorenz", "Edge of Chaos", and "Period Doubling"
 - **🌐 3D Camera Controls**: Orbit around 3D attractors with mouse controls
 
+### Analysis Tools
+
+- **📊 Lyapunov Exponent Indicator**: Real-time computation via variational equations — quantifies sensitivity to initial conditions
+- **🔀 Bifurcation Diagrams**: Parameter sweeps showing the route from order to chaos
+- **🎯 Poincaré Sections**: Cross-sectional slices of phase space revealing attractor structure
+- **🗺️ Parameter Space Explorer**: Interactive heatmap of system behavior across parameter ranges
+- **📸 Screenshots**: Capture the canvas as PNG (press P)
+- **🔗 URL Sharing**: Full state encoded in URL hash for sharing configurations (press L)
+
+### Accessibility & Performance
+
+- **⌨️ Full Keyboard Navigation**: Space (play/pause), R (reset), 1-3 (systems), T (theme), S (side-by-side), H (help), P (screenshot), L (share)
+- **♿ Screen Reader Support**: ARIA live regions, skip links, semantic structure
+- **🎛️ Reduced Motion**: Auto-pauses when `prefers-reduced-motion` is set
+- **⚡ RK4 Integration**: Fourth-order Runge-Kutta for numerically stable simulation
+- **🧩 Code-Split**: Lazy-loaded analysis panels, vendor chunk separation
+
 ## 🛠️ Built With
 
-- **React 19** + **TypeScript** - Modern UI framework with type safety
-- **Vite** - Lightning-fast development and build tool  
-- **Three.js** + **React Three Fiber** - 3D graphics and WebGL rendering
-- **React Three Drei** - Useful helpers and abstractions
-- **Zustand** - Lightweight state management
+- **React 19** + **TypeScript** — Modern UI framework with type safety
+- **Vite 7** — Lightning-fast development and build tool  
+- **Three.js** + **React Three Fiber** — 3D graphics and WebGL rendering
+- **React Three Drei** — Useful helpers and abstractions
+- **Zustand** — Lightweight state management
 
 ## 🎓 Educational Value
 

@@ -1,18 +1,20 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, lazy, Suspense } from 'react';
 import { Scene } from './components/Scene';
 import { Controls } from './components/Controls';
 import { InfoPanel } from './components/InfoPanel';
 import { QuickStart } from './components/QuickStart';
 import { DivergenceMeter } from './components/DivergenceMeter';
 import { LyapunovIndicator } from './components/LyapunovIndicator';
-import { BifurcationDiagram } from './components/BifurcationDiagram';
 import { HelpOverlay } from './components/HelpOverlay';
-import { PoincareSection } from './components/PoincareSection';
-import { ParameterSpace } from './components/ParameterSpace';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { useUrlState } from './hooks/useUrlState';
 import { useStore, THEMES } from './store/useStore';
 import './App.css';
+
+// Lazy-load heavy analysis panels (only rendered when toggled on)
+const BifurcationDiagram = lazy(() => import('./components/BifurcationDiagram').then(m => ({ default: m.BifurcationDiagram })));
+const PoincareSection = lazy(() => import('./components/PoincareSection').then(m => ({ default: m.PoincareSection })));
+const ParameterSpace = lazy(() => import('./components/ParameterSpace').then(m => ({ default: m.ParameterSpace })));
 
 /**
  * Detects prefers-reduced-motion and pauses simulation automatically.
@@ -71,9 +73,11 @@ function App() {
       </div>
       <DivergenceMeter />
       <LyapunovIndicator />
-      <BifurcationDiagram />
-      <PoincareSection />
-      <ParameterSpace />
+      <Suspense fallback={null}>
+        <BifurcationDiagram />
+        <PoincareSection />
+        <ParameterSpace />
+      </Suspense>
       <HelpOverlay isVisible={showHelp} onClose={toggleHelp} />
       <QuickStart />
 
