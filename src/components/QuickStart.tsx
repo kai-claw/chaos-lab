@@ -29,6 +29,11 @@ const QUICK_START_STEPS: QuickStartStep[] = [
     highlight: 'systems',
   },
   {
+    title: 'Hear the Chaos 🔊',
+    description: "Press M or click 'Sonify' to hear the chaos as sound! The pitch follows the attractor's position and the volume pulses with its velocity. Best with headphones.",
+    highlight: 'audio',
+  },
+  {
     title: 'Learn More',
     description: 'Click the info button (ℹ️) to learn about the mathematics and physics behind each system. Ready to explore chaos?',
     highlight: 'info',

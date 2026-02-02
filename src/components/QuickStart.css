@@ -4,36 +4,46 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 10, 0.85);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 2000;
-  backdrop-filter: blur(5px);
+  backdrop-filter: blur(12px);
+  animation: qsOverlayFade 0.6s ease-out;
+}
+
+@keyframes qsOverlayFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .quick-start-modal {
   width: 90%;
   max-width: 500px;
-  background: rgba(20, 20, 30, 0.95);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 16px;
+  background: rgba(12, 12, 24, 0.97);
+  border: 1px solid rgba(136, 204, 255, 0.15);
+  border-radius: 20px;
   padding: 0;
   color: white;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.7),
+              0 0 0 1px rgba(136, 204, 255, 0.05),
+              0 0 60px rgba(136, 204, 255, 0.05);
   backdrop-filter: blur(20px);
-  animation: slideIn 0.4s ease-out;
+  animation: qsSlideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes slideIn {
+@keyframes qsSlideIn {
   from {
     opacity: 0;
-    transform: translateY(-20px) scale(0.95);
+    transform: translateY(20px) scale(0.97);
+    filter: blur(4px);
   }
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
+    filter: blur(0);
   }
 }
 
@@ -133,12 +143,29 @@
   background: linear-gradient(135deg, #88ccff, #aaffaa);
   color: #001122;
   border: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.quick-start-next::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent 40%, rgba(255,255,255,0.2) 50%, transparent 60%);
+  background-size: 200% 100%;
+  animation: qsBtnShine 3s ease-in-out infinite;
+}
+
+@keyframes qsBtnShine {
+  0%, 100% { background-position: 200% 0; }
+  50% { background-position: -200% 0; }
 }
 
 .quick-start-next:hover {
   background: linear-gradient(135deg, #99ddff, #bbffbb);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(136, 204, 255, 0.3);
+  box-shadow: 0 4px 16px rgba(136, 204, 255, 0.35),
+              0 0 30px rgba(136, 204, 255, 0.1);
 }
 
 /* Responsive design */
@@ -177,7 +204,13 @@
 
 /* ─── Reduced Motion ─── */
 @media (prefers-reduced-motion: reduce) {
+  .quick-start-overlay {
+    animation: none;
+  }
   .quick-start-modal {
+    animation: none;
+  }
+  .quick-start-next::after {
     animation: none;
   }
   .progress-dot {

@@ -99,6 +99,16 @@ export function useKeyboardShortcuts(
           store.setChaosAutopilot(!store.chaosAutopilot);
           break;
 
+        case 'm':
+        case 'M':
+          store.setAudioEnabled(!store.audioEnabled);
+          break;
+
+        case 'b':
+        case 'B':
+          store.setBloomEnabled(!store.bloomEnabled);
+          break;
+
         case 'Escape':
           // Close any open overlay
           if (store.storyMode) { store.setStoryMode(false); store.setCinematicCamera(false); }

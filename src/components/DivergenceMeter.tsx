@@ -1,5 +1,6 @@
 import React from 'react';
 import { useStore, THEMES } from '../store/useStore';
+import './DivergenceMeter.css';
 
 export const DivergenceMeter: React.FC = () => {
   const { sideBySideMode, divergence, colorTheme } = useStore();
@@ -18,58 +19,34 @@ export const DivergenceMeter: React.FC = () => {
 
   return (
     <div
+      className="divergence-meter"
       role="meter"
       aria-label="Divergence between the two systems"
       aria-valuenow={normalizedDiv}
       aria-valuemin={0}
       aria-valuemax={1}
       aria-valuetext={`Divergence: ${displayValue}`}
-      style={{
-        position: 'absolute',
-        bottom: 80,
-        left: '50%',
-        transform: 'translateX(-50%)',
-        zIndex: 200,
-        pointerEvents: 'none',
-        textAlign: 'center',
-        fontFamily: "'Segoe UI', sans-serif",
-      }}
     >
-      <div style={{
-        color: theme.textMuted,
-        fontSize: '11px',
-        letterSpacing: '2px',
-        textTransform: 'uppercase',
-        marginBottom: 6,
-      }}>
+      <div className="divergence-label" style={{ color: theme.textMuted }}>
         Divergence
       </div>
-      <div style={{
-        width: 200,
-        height: 6,
-        background: `rgba(${theme.bgRgb}, 0.7)`,
-        borderRadius: 3,
-        overflow: 'hidden',
-        border: `1px solid ${theme.panelBorder}`,
-        backdropFilter: 'blur(4px)',
-      }}>
-        <div style={{
-          width: `${percentage}%`,
-          height: '100%',
-          background: `hsl(${barHue}, 90%, 55%)`,
-          borderRadius: 3,
-          transition: 'width 0.1s ease, background 0.3s ease',
-          boxShadow: `0 0 8px hsla(${barHue}, 90%, 55%, 0.6)`,
-        }} />
+      <div className="divergence-bar-track">
+        <div
+          className="divergence-bar-fill"
+          style={{
+            width: `${percentage}%`,
+            background: `hsl(${barHue}, 90%, 55%)`,
+            boxShadow: `0 0 10px hsla(${barHue}, 90%, 55%, 0.5), 0 0 20px hsla(${barHue}, 90%, 55%, 0.2)`,
+          }}
+        />
       </div>
-      <div style={{
-        color: theme.text,
-        fontSize: '13px',
-        marginTop: 4,
-        fontVariantNumeric: 'tabular-nums',
-        fontWeight: 600,
-        textShadow: `0 0 10px hsla(${barHue}, 90%, 55%, 0.5)`,
-      }}>
+      <div
+        className="divergence-value"
+        style={{
+          color: `hsl(${barHue}, 80%, 65%)`,
+          textShadow: `0 0 12px hsla(${barHue}, 90%, 55%, 0.4)`,
+        }}
+      >
         {displayValue}
       </div>
     </div>

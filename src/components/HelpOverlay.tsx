@@ -15,6 +15,8 @@ const SHORTCUTS = [
   { key: 'S', action: 'Toggle side-by-side (Butterfly) mode' },
   { key: 'C', action: 'Toggle cinematic chase camera' },
   { key: 'A', action: 'Toggle chaos autopilot' },
+  { key: 'M', action: 'Toggle audio sonification' },
+  { key: 'B', action: 'Toggle bloom glow effect' },
   { key: 'T', action: 'Cycle through color themes' },
   { key: 'P', action: 'Screenshot current view' },
   { key: 'L', action: 'Copy share link to clipboard' },

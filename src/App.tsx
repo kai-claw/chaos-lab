@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, lazy, Suspense } from 'react';
+import { useEffect, useState, useCallback, useRef, lazy, Suspense } from 'react';
 import { Scene } from './components/Scene';
 import { Controls } from './components/Controls';
 import { InfoPanel } from './components/InfoPanel';
@@ -41,6 +41,11 @@ function App() {
   const { colorTheme, currentSystem } = useStore();
   const theme = THEMES[colorTheme];
   const [showHelp, setShowHelp] = useState(false);
+  const [entered, setEntered] = useState(false);
+  const [titleVisible, setTitleVisible] = useState(true);
+  const [uiReady, setUiReady] = useState(false);
+  const prevSystemRef = useRef(currentSystem);
+  const [systemTransition, setSystemTransition] = useState(false);
 
   const toggleHelp = useCallback(() => setShowHelp((v) => !v), []);
 
@@ -48,13 +53,37 @@ function App() {
   useKeyboardShortcuts(toggleHelp);
   useUrlState();
 
+  // Cinematic entrance sequence
+  useEffect(() => {
+    // Scene fades in
+    const t1 = setTimeout(() => setEntered(true), 100);
+    // UI elements appear after scene
+    const t2 = setTimeout(() => setUiReady(true), 1200);
+    // Title gracefully fades after settling
+    const t3 = setTimeout(() => setTitleVisible(false), 6000);
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
+  }, []);
+
+  // System transition crossfade
+  useEffect(() => {
+    if (prevSystemRef.current !== currentSystem) {
+      setSystemTransition(true);
+      const t = setTimeout(() => setSystemTransition(false), 600);
+      prevSystemRef.current = currentSystem;
+      return () => clearTimeout(t);
+    }
+  }, [currentSystem]);
+
   const systemName =
     currentSystem === 'lorenz' ? 'Lorenz Attractor' :
     currentSystem === 'rossler' ? 'Rössler Attractor' :
     'Double Pendulum';
 
   return (
-    <div className="app" style={{ '--bg': theme.bg, '--text': theme.text, '--accent': theme.accent } as React.CSSProperties}>
+    <div
+      className={`app ${entered ? 'entered' : 'entering'} ${systemTransition ? 'system-transitioning' : ''}`}
+      style={{ '--bg': theme.bg, '--text': theme.text, '--accent': theme.accent } as React.CSSProperties}
+    >
       {/* Skip link for keyboard users */}
       <a href="#controls-region" className="skip-link">
         Skip to controls
@@ -65,37 +94,44 @@ function App() {
         Now viewing: {systemName}
       </div>
 
-      <main>
+      <main className={systemTransition ? 'scene-crossfade' : ''}>
         <Scene />
       </main>
 
-      <InfoPanel />
-      <div id="controls-region">
-        <Controls />
+      <div className={`ui-layer ${uiReady ? 'visible' : ''}`}>
+        <InfoPanel />
+        <div id="controls-region">
+          <Controls />
+        </div>
+        <DivergenceMeter />
+        <LyapunovIndicator />
+        <Suspense fallback={null}>
+          <BifurcationDiagram />
+          <PoincareSection />
+          <ParameterSpace />
+        </Suspense>
       </div>
-      <DivergenceMeter />
-      <LyapunovIndicator />
-      <Suspense fallback={null}>
-        <BifurcationDiagram />
-        <PoincareSection />
-        <ParameterSpace />
-      </Suspense>
+
       <HelpOverlay isVisible={showHelp} onClose={toggleHelp} />
       <StoryMode />
       <QuickStart />
       <ChaosSynth />
 
-      {/* Title overlay */}
-      <div className="title-overlay" aria-hidden="true">
+      {/* Title overlay — fades after entrance, returns on hover */}
+      <div
+        className={`title-overlay ${titleVisible ? 'visible' : 'faded'}`}
+        aria-hidden="true"
+        onMouseEnter={() => setTitleVisible(true)}
+        onMouseLeave={() => setTitleVisible(false)}
+      >
         <h1>Chaos Lab</h1>
         <p>Interactive Chaos Theory Visualizer</p>
       </div>
 
-      {/* Instructions overlay */}
-      <div className="instructions" aria-hidden="true">
+      {/* Instructions overlay — warmer language */}
+      <div className={`instructions ${uiReady ? 'visible' : ''}`} aria-hidden="true">
         <p>
-          <strong>Mouse:</strong> Drag to rotate · Scroll to zoom · Right-drag to pan<br />
-          <strong>Touch:</strong> Drag to rotate · Pinch to zoom
+          Drag to explore · Scroll to dive deeper · Right-drag to drift
         </p>
       </div>
     </div>

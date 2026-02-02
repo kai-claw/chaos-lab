@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { useStore, THEMES } from '../store/useStore';
@@ -27,6 +27,11 @@ export const EnergyPulse: React.FC = () => {
   const prevPos = useRef(new THREE.Vector3());
   const smoothVel = useRef(0);
   const smoothIntensity = useRef(0);
+
+  // Cache colors to avoid per-frame allocations
+  const baseColor = useMemo(() => new THREE.Color(theme.accent), [theme.accent]);
+  const lerpColor = useMemo(() => new THREE.Color(), []);
+  const white = useMemo(() => new THREE.Color(1, 1, 1), []);
 
   useFrame(() => {
     if (!isPlaying || !lightRef.current || !meshRef.current) return;
@@ -70,13 +75,11 @@ export const EnergyPulse: React.FC = () => {
     const pulseScale = 0.03 + smoothVel.current * 0.15;
     meshRef.current.scale.setScalar(pulseScale);
 
-    // Color: shift toward white/brighter at high velocity
-    const baseColor = new THREE.Color(theme.accent);
-    const white = new THREE.Color(1, 1, 1);
+    // Color: shift toward white/brighter at high velocity (zero alloc)
     const velFactor = Math.min(smoothVel.current * 3, 0.6);
-    const lerpedColor = baseColor.lerp(white, velFactor);
-    lightRef.current.color.copy(lerpedColor);
-    (meshRef.current.material as THREE.MeshBasicMaterial).color.copy(lerpedColor);
+    lerpColor.copy(baseColor).lerp(white, velFactor);
+    lightRef.current.color.copy(lerpColor);
+    (meshRef.current.material as THREE.MeshBasicMaterial).color.copy(lerpColor);
   });
 
   return (

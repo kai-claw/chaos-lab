@@ -121,15 +121,26 @@ const SystemRenderer: React.FC<SystemRendererProps> = ({
 /* ─── dynamic bloom controller ─── */
 const DynamicBloom: React.FC = () => {
   const { bloomEnabled, bloomIntensity, isPlaying } = useStore();
-  const intensityRef = useRef(bloomIntensity);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const bloomRef = useRef<any>(null);
+  const smoothIntensity = useRef(bloomIntensity);
 
   useFrame(() => {
-    if (!bloomEnabled || !isPlaying) return;
+    if (!bloomEnabled || !bloomRef.current) return;
+
+    if (!isPlaying) {
+      // Static intensity when paused
+      bloomRef.current.intensity = bloomIntensity;
+      return;
+    }
 
     const system = (window as unknown as Record<string, unknown>).__chaosLabSystem as
       | { points: THREE.Vector3[] }
       | undefined;
-    if (!system?.points || system.points.length < 5) return;
+    if (!system?.points || system.points.length < 5) {
+      bloomRef.current.intensity = bloomIntensity;
+      return;
+    }
 
     const pts = system.points;
     const head = pts[pts.length - 1];
@@ -141,7 +152,9 @@ const DynamicBloom: React.FC = () => {
 
     // Pulse bloom with velocity (subtle: ±30% of base intensity)
     const pulse = 1 + Math.min(velocity * 0.02, 0.3);
-    intensityRef.current += (bloomIntensity * pulse - intensityRef.current) * 0.05;
+    const target = bloomIntensity * pulse;
+    smoothIntensity.current += (target - smoothIntensity.current) * 0.05;
+    bloomRef.current.intensity = smoothIntensity.current;
   });
 
   if (!bloomEnabled) return null;
@@ -149,7 +162,8 @@ const DynamicBloom: React.FC = () => {
   return (
     <EffectComposer>
       <Bloom
-        intensity={intensityRef.current}
+        ref={bloomRef}
+        intensity={bloomIntensity}
         luminanceThreshold={0.1}
         luminanceSmoothing={0.9}
         mipmapBlur

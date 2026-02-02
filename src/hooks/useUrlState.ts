@@ -20,6 +20,8 @@ function encodeState(): string {
   p.set('trail', String(s.trailLength));
   p.set('sbs', s.sideBySideMode ? '1' : '0');
   if (s.sideBySideMode) p.set('offset', s.initialOffset.toExponential(1));
+  if (s.bloomEnabled) p.set('bloom', s.bloomIntensity.toFixed(1));
+  if (s.audioEnabled) p.set('audio', '1');
 
   switch (s.currentSystem) {
     case 'lorenz':
@@ -69,6 +71,18 @@ function decodeHash(hash: string): boolean {
       store.setSideBySideMode(true);
       const offset = parseFloat(p.get('offset') || '');
       if (offset > 0 && offset < 1) store.setInitialOffset(offset);
+    }
+
+    const bloom = parseFloat(p.get('bloom') || '');
+    if (bloom > 0 && bloom <= 4) {
+      store.setBloomEnabled(true);
+      store.setBloomIntensity(bloom);
+    } else if (p.has('bloom') && p.get('bloom') === '0') {
+      store.setBloomEnabled(false);
+    }
+
+    if (p.get('audio') === '1') {
+      store.setAudioEnabled(true);
     }
 
     switch (sys) {
@@ -134,6 +148,7 @@ export function useUrlState() {
   const {
     currentSystem, colorTheme, speed, trailLength, sideBySideMode, initialOffset,
     lorenzParams, rosslerParams, doublePendulumParams,
+    bloomEnabled, bloomIntensity, audioEnabled,
   } = useStore();
 
   useEffect(() => {
@@ -144,5 +159,6 @@ export function useUrlState() {
   }, [
     currentSystem, colorTheme, speed, trailLength, sideBySideMode, initialOffset,
     lorenzParams, rosslerParams, doublePendulumParams,
+    bloomEnabled, bloomIntensity, audioEnabled,
   ]);
 }
