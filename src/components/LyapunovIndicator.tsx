@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { useStore, THEMES } from '../store/useStore';
 import './LyapunovIndicator.css';
 
 export const LyapunovIndicator: React.FC = () => {
   const { showLyapunov, lyapunovExponent, colorTheme } = useStore();
   const theme = THEMES[colorTheme];
+  const lastAnnouncedRef = useRef<string>('');
 
   if (!showLyapunov) return null;
 
@@ -24,12 +25,15 @@ export const LyapunovIndicator: React.FC = () => {
     lyapunovExponent > -0.05 ? '🟡' :
     '🟢';
 
+  // Only announce status CHANGES to screen readers, not continuous numeric updates
+  const shouldAnnounce = lastAnnouncedRef.current !== statusLabel;
+  if (shouldAnnounce) lastAnnouncedRef.current = statusLabel;
+
   return (
     <div
       className="lyapunov-indicator"
-      role="status"
-      aria-label={`Lyapunov exponent: ${lyapunovExponent.toFixed(3)}, system is ${statusLabel}`}
-      aria-live="polite"
+      role="region"
+      aria-label={`Lyapunov exponent indicator: system is ${statusLabel}`}
       style={{
         '--panel-bg': theme.panelBg,
         '--panel-border': theme.panelBorder,
@@ -69,6 +73,13 @@ export const LyapunovIndicator: React.FC = () => {
       <div className="lyapunov-hint">
         Measures how fast nearby paths diverge. Positive = chaos.
       </div>
+
+      {/* Screen reader: only announce when status category changes */}
+      {shouldAnnounce && (
+        <div className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+          System is now {statusLabel}, Lyapunov exponent: {lyapunovExponent.toFixed(2)}
+        </div>
+      )}
     </div>
   );
 };

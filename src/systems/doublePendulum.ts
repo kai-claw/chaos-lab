@@ -132,6 +132,13 @@ export class DoublePendulumSystem {
     this.state.omega1 += (dt / 6) * (k1.omega1 + 2 * k2.omega1 + 2 * k3.omega1 + k4.omega1);
     this.state.omega2 += (dt / 6) * (k1.omega2 + 2 * k2.omega2 + 2 * k3.omega2 + k4.omega2);
 
+    // Stability guard: reset on NaN or extreme divergence
+    if (!isFinite(this.state.theta1) || !isFinite(this.state.theta2) ||
+        !isFinite(this.state.omega1) || !isFinite(this.state.omega2) ||
+        Math.abs(this.state.omega1) > 1e6 || Math.abs(this.state.omega2) > 1e6) {
+      this.state = { theta1: Math.PI / 2, theta2: Math.PI / 2, omega1: 0, omega2: 0 };
+    }
+
     // Calculate positions
     const pos = this.calculatePositions();
     this.positions.push(pos);
@@ -178,7 +185,7 @@ export class DoublePendulumSystem {
     if (normPrev > Math.PI && normTheta2 <= Math.PI && normTheta2 < 1 && this.points.length > 100) {
       this.poincarePoints.push([this.state.theta1, this.state.omega1]);
       if (this.poincarePoints.length > this.MAX_POINCARE) {
-        this.poincarePoints = this.poincarePoints.slice(-this.MAX_POINCARE);
+        this.poincarePoints.splice(0, this.poincarePoints.length - this.MAX_POINCARE);
       }
     }
     this.prevTheta2 = this.state.theta2;
@@ -204,10 +211,12 @@ export class DoublePendulumSystem {
     this.params = { ...this.params, ...params };
   }
 
+  /** In-place trim using splice (avoids creating new arrays via slice) */
   public trimTrail(maxLength: number): void {
     if (this.points.length > maxLength) {
-      this.points = this.points.slice(-maxLength);
-      this.positions = this.positions.slice(-maxLength);
+      const excess = this.points.length - maxLength;
+      this.points.splice(0, excess);
+      this.positions.splice(0, excess);
     }
   }
 

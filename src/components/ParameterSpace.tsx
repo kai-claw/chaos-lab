@@ -22,9 +22,10 @@ export const ParameterSpace: React.FC = () => {
   const animFrameRef = useRef(0);
   const [computing, setComputing] = useState(false);
   const [progress, setProgress] = useState(0);
-  const store = useStore.getState();
+  const lorenzParams = useStore((s) => s.lorenzParams);
+  const rosslerParams = useStore((s) => s.rosslerParams);
 
-  // Define parameter ranges per system
+  // Define parameter ranges per system (reads live state, not stale snapshot)
   const getConfig = useCallback(() => {
     if (currentSystem === 'lorenz') {
       return {
@@ -35,8 +36,8 @@ export const ParameterSpace: React.FC = () => {
         xSteps: 120,
         ySteps: 100,
         title: 'Lorenz Parameter Space (Lyapunov)',
-        currentX: store.lorenzParams.sigma,
-        currentY: store.lorenzParams.rho,
+        currentX: lorenzParams.sigma,
+        currentY: lorenzParams.rho,
       };
     } else if (currentSystem === 'rossler') {
       return {
@@ -47,12 +48,12 @@ export const ParameterSpace: React.FC = () => {
         xSteps: 100,
         ySteps: 100,
         title: 'Rössler Parameter Space (Lyapunov)',
-        currentX: store.rosslerParams.a,
-        currentY: store.rosslerParams.c,
+        currentX: rosslerParams.a,
+        currentY: rosslerParams.c,
       };
     }
     return null;
-  }, [currentSystem, store.lorenzParams, store.rosslerParams]);
+  }, [currentSystem, lorenzParams, rosslerParams]);
 
   const computeMap = useCallback(() => {
     const canvas = canvasRef.current;
@@ -318,11 +319,15 @@ export const ParameterSpace: React.FC = () => {
   return (
     <div
       className="paramspace-overlay"
+      role="dialog"
+      aria-label={config.title}
+      aria-modal="false"
+      onKeyDown={(e) => { if (e.key === 'Escape') setShowParameterSpace(false); }}
       style={{ '--panel-bg': theme.panelBg, '--panel-border': theme.panelBorder, '--text': theme.text, '--accent': theme.accent } as React.CSSProperties}
     >
       <div className="paramspace-header">
         <h3>🗺️ {config.title}</h3>
-        <button className="paramspace-close" onClick={() => setShowParameterSpace(false)}>✕</button>
+        <button className="paramspace-close" onClick={() => setShowParameterSpace(false)} aria-label="Close parameter space explorer">✕</button>
       </div>
       <div className="paramspace-canvas-wrap">
         <canvas ref={canvasRef} width={CANVAS_W} height={CANVAS_H} className="paramspace-canvas" />

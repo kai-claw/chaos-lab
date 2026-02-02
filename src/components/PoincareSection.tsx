@@ -170,6 +170,9 @@ export const PoincareSection: React.FC = () => {
   return (
     <div
       className="poincare-overlay"
+      role="dialog"
+      aria-label={labels.title}
+      aria-modal="false"
       style={{
         '--panel-bg': theme.panelBg,
         '--panel-border': theme.panelBorder,
@@ -179,7 +182,13 @@ export const PoincareSection: React.FC = () => {
     >
       <div className="poincare-header">
         <h3>🎯 {labels.title}</h3>
-        <button className="poincare-close" onClick={() => setShowPoincare(false)}>✕</button>
+        <button
+          className="poincare-close"
+          onClick={() => setShowPoincare(false)}
+          aria-label="Close Poincaré section"
+        >
+          ✕
+        </button>
       </div>
       <div className="poincare-canvas-wrap">
         <canvas

@@ -56,7 +56,6 @@ export const RosslerAttractor: React.FC<RosslerAttractorProps> = ({
     };
   }, [rosslerSystem, isSecondary]);
 
-  const scaledPoints = useRef<THREE.Vector3[]>([]);
   const frameCounter = useRef(0);
 
   useFrame(() => {
@@ -65,12 +64,6 @@ export const RosslerAttractor: React.FC<RosslerAttractorProps> = ({
     rosslerSystem.trimTrail(trailLength);
 
     const pts = rosslerSystem.points;
-    const sp: THREE.Vector3[] = [];
-    for (let i = 0; i < pts.length; i++) {
-      sp.push(new THREE.Vector3(pts[i].x * scale, pts[i].y * scale, pts[i].z * scale));
-    }
-    scaledPoints.current = sp;
-
     if (lastPosRef && pts.length > 0) {
       const last = pts[pts.length - 1];
       (lastPosRef as React.MutableRefObject<THREE.Vector3 | null>).current = last.clone();
@@ -92,11 +85,12 @@ export const RosslerAttractor: React.FC<RosslerAttractorProps> = ({
   return (
     <group ref={groupRef} position={position}>
       <GradientTrail
-        points={scaledPoints.current}
+        points={rosslerSystem.points}
         hueStart={hStart}
         hueEnd={hEnd}
         lineWidth={2.5}
         glowIntensity={0.5}
+        scale={scale}
       />
 
       {rosslerSystem.points.length > 0 && (() => {

@@ -1,4 +1,4 @@
-import React, { Suspense, useRef } from 'react';
+import React, { Suspense, useRef, Component, type ReactNode } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Grid } from '@react-three/drei';
 import * as THREE from 'three';
@@ -35,14 +35,17 @@ const CameraControls: React.FC = () => {
   );
 };
 
-/* ─── divergence tracker ─── */
+/* ─── divergence tracker (throttled to avoid per-frame state updates) ─── */
 const DivTracker: React.FC<{
   posA: React.RefObject<THREE.Vector3 | null>;
   posB: React.RefObject<THREE.Vector3 | null>;
 }> = ({ posA, posB }) => {
   const { setDivergence, sideBySideMode } = useStore();
+  const frameCount = useRef(0);
   useFrame(() => {
     if (!sideBySideMode) return;
+    frameCount.current++;
+    if (frameCount.current % 6 !== 0) return; // ~10 updates/sec at 60fps
     const a = posA.current;
     const b = posB.current;
     if (a && b) {
@@ -167,6 +170,55 @@ const SceneContent: React.FC = () => {
   );
 };
 
+/* ─── WebGL Error Boundary ─── */
+interface ErrorBoundaryState {
+  hasError: boolean;
+  error: Error | null;
+}
+
+class WebGLErrorBoundary extends Component<{ children: ReactNode }, ErrorBoundaryState> {
+  state: ErrorBoundaryState = { hasError: false, error: null };
+
+  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+    return { hasError: true, error };
+  }
+
+  handleRetry = () => {
+    this.setState({ hasError: false, error: null });
+  };
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{
+          width: '100vw', height: '100vh', display: 'flex', flexDirection: 'column',
+          alignItems: 'center', justifyContent: 'center', background: '#000010', color: '#ccc',
+          fontFamily: 'system-ui, sans-serif', textAlign: 'center', padding: '2rem',
+        }}>
+          <h2 style={{ color: '#ff6666', marginBottom: '1rem' }}>⚠️ Rendering Error</h2>
+          <p style={{ maxWidth: '400px', lineHeight: 1.6, marginBottom: '1rem' }}>
+            The 3D visualization encountered an error. This can happen if WebGL is not available
+            or if GPU resources were exhausted.
+          </p>
+          <code style={{ background: 'rgba(255,255,255,0.05)', padding: '8px 16px', borderRadius: '6px', fontSize: '12px', color: '#ff9999', marginBottom: '1.5rem', maxWidth: '80vw', overflow: 'auto' }}>
+            {this.state.error?.message || 'Unknown error'}
+          </code>
+          <button
+            onClick={this.handleRetry}
+            style={{
+              padding: '12px 24px', background: '#88ccff', color: '#000', border: 'none',
+              borderRadius: '8px', fontSize: '14px', fontWeight: 600, cursor: 'pointer',
+            }}
+          >
+            🔄 Retry
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 /* ─── scene wrapper ─── */
 export const Scene: React.FC = () => {
   const { currentSystem, colorTheme } = useStore();
@@ -174,21 +226,23 @@ export const Scene: React.FC = () => {
   const cam = CAMERA_SETTINGS[currentSystem] ?? CAMERA_SETTINGS.lorenz;
 
   return (
-    <div
-      style={{ width: '100vw', height: '100vh', background: theme.bg }}
-      role="img"
-      aria-label={`3D visualization of ${currentSystem === 'lorenz' ? 'Lorenz attractor' : currentSystem === 'rossler' ? 'Rössler attractor' : 'double pendulum'} chaos system`}
-    >
-      <Canvas
-        camera={{ position: cam.position, fov: cam.fov }}
-        gl={{ antialias: true, alpha: true, powerPreference: 'high-performance', preserveDrawingBuffer: true }}
+    <WebGLErrorBoundary>
+      <div
+        style={{ width: '100vw', height: '100vh', background: theme.bg }}
+        role="img"
+        aria-label={`3D visualization of ${currentSystem === 'lorenz' ? 'Lorenz attractor' : currentSystem === 'rossler' ? 'Rössler attractor' : 'double pendulum'} chaos system`}
       >
-        <color attach="background" args={[theme.bg]} />
-        <fog attach="fog" args={[theme.bg, 30, 60]} />
-        <Suspense fallback={null}>
-          <SceneContent />
-        </Suspense>
-      </Canvas>
-    </div>
+        <Canvas
+          camera={{ position: cam.position, fov: cam.fov }}
+          gl={{ antialias: true, alpha: true, powerPreference: 'high-performance', preserveDrawingBuffer: true }}
+        >
+          <color attach="background" args={[theme.bg]} />
+          <fog attach="fog" args={[theme.bg, 30, 60]} />
+          <Suspense fallback={null}>
+            <SceneContent />
+          </Suspense>
+        </Canvas>
+      </div>
+    </WebGLErrorBoundary>
   );
 };

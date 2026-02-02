@@ -61,7 +61,6 @@ export const DoublePendulum: React.FC<DoublePendulumProps> = ({
     };
   }, [pendulumSystem, isSecondary]);
 
-  const scaledPoints = useRef<THREE.Vector3[]>([]);
   const frameCounter = useRef(0);
 
   useFrame(() => {
@@ -70,12 +69,6 @@ export const DoublePendulum: React.FC<DoublePendulumProps> = ({
     pendulumSystem.trimTrail(trailLength);
 
     const pts = pendulumSystem.points;
-    const sp: THREE.Vector3[] = [];
-    for (let i = 0; i < pts.length; i++) {
-      sp.push(new THREE.Vector3(pts[i].x * scale, pts[i].y * scale, 0));
-    }
-    scaledPoints.current = sp;
-
     if (lastPosRef && pts.length > 0) {
       const last = pts[pts.length - 1];
       (lastPosRef as React.MutableRefObject<THREE.Vector3 | null>).current = new THREE.Vector3(last.x, last.y, 0);
@@ -106,11 +99,13 @@ export const DoublePendulum: React.FC<DoublePendulumProps> = ({
   return (
     <group ref={groupRef} position={position}>
       <GradientTrail
-        points={scaledPoints.current}
+        points={pendulumSystem.points}
         hueStart={hStart}
         hueEnd={hEnd}
         lineWidth={1.8}
         glowIntensity={0.4}
+        scale={scale}
+        flatZ
       />
 
       {/* Rod 1 */}

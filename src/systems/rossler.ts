@@ -72,6 +72,12 @@ export class RosslerSystem {
     this.position.y += (dt / 6) * (k1y + 2 * k2y + 2 * k3y + k4y);
     this.position.z += (dt / 6) * (k1z + 2 * k2z + 2 * k3z + k4z);
 
+    // Stability guard: reset on divergence / NaN
+    if (!isFinite(this.position.x) || !isFinite(this.position.y) || !isFinite(this.position.z) ||
+        Math.abs(this.position.x) > 1e6) {
+      this.position.set(1, 1, 1);
+    }
+
     this.points.push(this.position.clone());
 
     // --- Lyapunov exponent ---
@@ -100,7 +106,7 @@ export class RosslerSystem {
     if (this.prevY < 0 && this.position.y >= 0 && this.points.length > 100) {
       this.poincarePoints.push([this.position.x, this.position.z]);
       if (this.poincarePoints.length > this.MAX_POINCARE) {
-        this.poincarePoints = this.poincarePoints.slice(-this.MAX_POINCARE);
+        this.poincarePoints.splice(0, this.poincarePoints.length - this.MAX_POINCARE);
       }
     }
     this.prevY = this.position.y;
@@ -124,9 +130,10 @@ export class RosslerSystem {
     this.params = { ...this.params, ...params };
   }
 
+  /** In-place trim using splice (avoids creating a new array via slice) */
   public trimTrail(maxLength: number): void {
     if (this.points.length > maxLength) {
-      this.points = this.points.slice(-maxLength);
+      this.points.splice(0, this.points.length - maxLength);
     }
   }
 
