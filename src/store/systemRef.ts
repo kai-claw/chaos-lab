@@ -48,3 +48,12 @@ export function clearActiveSystem(system: ChaosSystemRef): void {
     systemRef.type = null;
   }
 }
+
+/** Apply a random perturbation to the active system.
+ *  Each system class implements a `perturb(amount)` method. */
+export function perturbActiveSystem(amount: number): void {
+  const sys = systemRef.system;
+  if (sys && typeof (sys as ChaosSystemRef & { perturb?: (a: number) => void }).perturb === 'function') {
+    (sys as ChaosSystemRef & { perturb: (a: number) => void }).perturb(amount);
+  }
+}

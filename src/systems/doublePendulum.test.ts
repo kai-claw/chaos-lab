@@ -138,6 +138,18 @@ describe('DoublePendulumSystem', () => {
     });
   });
 
+  describe('perturb', () => {
+    it('should alter the pendulum state', () => {
+      for (let i = 0; i < 50; i++) system.step(1.0);
+      const stateBefore = system.getState();
+      system.perturb(1.0);
+      const stateAfter = system.getState();
+      const changed = stateBefore.theta1 !== stateAfter.theta1 ||
+                      stateBefore.omega1 !== stateAfter.omega1;
+      expect(changed).toBe(true);
+    });
+  });
+
   describe('sensitivity to initial conditions', () => {
     it('tiny angle difference leads to divergent trajectories', () => {
       const sys1 = new DoublePendulumSystem(

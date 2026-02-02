@@ -18,7 +18,7 @@ export const StoryMode: React.FC = () => {
     setCurrentSystem, setLorenzParams, setRosslerParams, setDoublePendulumParams,
     setTrailLength, setSpeed, setSideBySideMode, setInitialOffset,
     setCurrentPreset, setAutoRotate, resetSimulation,
-    colorTheme, setCinematicCamera,
+    colorTheme, setCinematicCamera, setParticleSwarm,
   } = useStore();
 
   const theme = THEMES[colorTheme];
@@ -43,6 +43,9 @@ export const StoryMode: React.FC = () => {
     // This creates an immersive first-person flythrough experience
     setCinematicCamera(!story.sideBySide);
 
+    // Auto-enable particle swarm for the murmuration story
+    setParticleSwarm(story.name === 'The Murmuration');
+
     // Apply system-specific parameters
     switch (story.system) {
       case 'lorenz':
@@ -61,7 +64,7 @@ export const StoryMode: React.FC = () => {
   }, [
     setCurrentSystem, setLorenzParams, setRosslerParams, setDoublePendulumParams,
     setTrailLength, setSpeed, setSideBySideMode, setInitialOffset,
-    setCurrentPreset, setAutoRotate, setCinematicCamera, resetSimulation,
+    setCurrentPreset, setAutoRotate, setCinematicCamera, setParticleSwarm, resetSimulation,
   ]);
 
   /** Advance to next story */
@@ -110,9 +113,10 @@ export const StoryMode: React.FC = () => {
   const exitStoryMode = useCallback(() => {
     setStoryMode(false);
     setCinematicCamera(false);
+    setParticleSwarm(false);
     setAutoRotate(false);
     if (timerRef.current) clearTimeout(timerRef.current);
-  }, [setStoryMode, setCinematicCamera, setAutoRotate]);
+  }, [setStoryMode, setCinematicCamera, setParticleSwarm, setAutoRotate]);
 
   // Handle keyboard
   useEffect(() => {

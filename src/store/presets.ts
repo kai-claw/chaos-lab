@@ -106,4 +106,15 @@ export const STORY_PRESETS: StoryPreset[] = [
     sideBySide: true,
     offset: 0.0001,
   },
+  {
+    name: 'The Murmuration',
+    emoji: '🐦',
+    description: 'A swarm of particles traces the attractor — chaos as collective motion',
+    system: 'lorenz',
+    params: { sigma: 10, rho: 28, beta: 8 / 3 },
+    trailLength: 1500,
+    speed: 1.2,
+    sideBySide: false,
+    offset: 0.001,
+  },
 ];

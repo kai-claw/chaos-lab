@@ -51,6 +51,8 @@ export const Controls: React.FC = () => {
     bloomIntensity, setBloomIntensity,
     audioEnabled, setAudioEnabled,
     audioVolume, setAudioVolume,
+    particleSwarm, setParticleSwarm,
+    perturbSystem,
   } = useStore();
 
   const theme = THEMES[colorTheme];
@@ -356,6 +358,21 @@ export const Controls: React.FC = () => {
                 🔊 Sonify
               </button>
               <button
+                className={`experience-btn swarm ${particleSwarm ? 'active' : ''}`}
+                onClick={() => setParticleSwarm(!particleSwarm)}
+                aria-pressed={particleSwarm}
+                aria-label="Toggle particle swarm — 200 particles trace the attractor simultaneously"
+              >
+                🐦 Particle Swarm
+              </button>
+              <button
+                className="experience-btn perturb"
+                onClick={perturbSystem}
+                aria-label="Apply random perturbation — nudge the system to see chaos in action"
+              >
+                ⚡ Perturb
+              </button>
+              <button
                 className="experience-btn story"
                 onClick={() => {
                   setStoryMode(true);
@@ -387,6 +404,11 @@ export const Controls: React.FC = () => {
             {cinematicCamera && (
               <div className="autopilot-hint">
                 Camera is following the trail head. Orbit controls disabled.
+              </div>
+            )}
+            {particleSwarm && (
+              <div className="autopilot-hint">
+                🐦 200 particles are swarming through the attractor...
               </div>
             )}
           </div>

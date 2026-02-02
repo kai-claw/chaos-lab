@@ -17,6 +17,8 @@ const SHORTCUTS = [
   { key: 'A', action: 'Toggle chaos autopilot' },
   { key: 'M', action: 'Toggle audio sonification' },
   { key: 'B', action: 'Toggle bloom glow effect' },
+  { key: 'G', action: 'Toggle particle swarm mode' },
+  { key: 'X', action: 'Perturb — random kick to the system' },
   { key: 'T', action: 'Cycle through color themes' },
   { key: 'P', action: 'Screenshot current view' },
   { key: 'L', action: 'Copy share link to clipboard' },

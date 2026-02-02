@@ -234,4 +234,13 @@ export class DoublePendulumSystem {
   public getState(): PendulumState {
     return { ...this.state };
   }
+
+  /** Apply a random perturbation to the current state.
+   *  Angles get a small kick, angular velocities get a larger one. */
+  public perturb(amount: number): void {
+    this.state.theta1 += (Math.random() - 0.5) * amount * 0.3;
+    this.state.theta2 += (Math.random() - 0.5) * amount * 0.3;
+    this.state.omega1 += (Math.random() - 0.5) * amount * 3;
+    this.state.omega2 += (Math.random() - 0.5) * amount * 3;
+  }
 }

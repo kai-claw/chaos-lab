@@ -38,7 +38,7 @@ function useReducedMotion() {
 }
 
 function App() {
-  const { colorTheme, currentSystem } = useStore();
+  const { colorTheme, currentSystem, _perturbCounter } = useStore();
   const theme = THEMES[colorTheme];
   const [showHelp, setShowHelp] = useState(false);
   const [entered, setEntered] = useState(false);
@@ -46,6 +46,8 @@ function App() {
   const [uiReady, setUiReady] = useState(false);
   const prevSystemRef = useRef(currentSystem);
   const [systemTransition, setSystemTransition] = useState(false);
+  const [perturbed, setPerturbed] = useState(false);
+  const prevPerturbRef = useRef(_perturbCounter);
 
   const toggleHelp = useCallback(() => setShowHelp((v) => !v), []);
 
@@ -74,6 +76,16 @@ function App() {
     }
   }, [currentSystem]);
 
+  // Perturbation shake effect
+  useEffect(() => {
+    if (_perturbCounter > 0 && _perturbCounter !== prevPerturbRef.current) {
+      setPerturbed(true);
+      const t = setTimeout(() => setPerturbed(false), 450);
+      prevPerturbRef.current = _perturbCounter;
+      return () => clearTimeout(t);
+    }
+  }, [_perturbCounter]);
+
   const systemName =
     currentSystem === 'lorenz' ? 'Lorenz Attractor' :
     currentSystem === 'rossler' ? 'Rössler Attractor' :
@@ -81,7 +93,7 @@ function App() {
 
   return (
     <div
-      className={`app ${entered ? 'entered' : 'entering'} ${systemTransition ? 'system-transitioning' : ''}`}
+      className={`app ${entered ? 'entered' : 'entering'} ${systemTransition ? 'system-transitioning' : ''} ${perturbed ? 'perturbed' : ''}`}
       style={{ '--bg': theme.bg, '--text': theme.text, '--accent': theme.accent } as React.CSSProperties}
     >
       {/* Skip link for keyboard users */}

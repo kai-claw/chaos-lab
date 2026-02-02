@@ -149,4 +149,27 @@ export interface AppState {
   setAudioEnabled: (enabled: boolean) => void;
   audioVolume: number;
   setAudioVolume: (volume: number) => void;
+
+  // Particle Swarm
+  particleSwarm: boolean;
+  setParticleSwarm: (enabled: boolean) => void;
+
+  // Perturbation
+  _perturbCounter: number;
+  perturbSystem: () => void;
+
+  // Ghost trail capture
+  _ghostVersion: number;
+  captureGhost: () => void;
+  clearGhosts: () => void;
+
+  // Floor shadow projection
+  showFloorShadow: boolean;
+  setShowFloorShadow: (show: boolean) => void;
+
+  // Exposure mode (long-exposure point cloud)
+  exposureMode: boolean;
+  setExposureMode: (enabled: boolean) => void;
+  _exposureClearCounter: number;
+  clearExposure: () => void;
 }

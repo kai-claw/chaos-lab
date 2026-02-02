@@ -1,5 +1,7 @@
 import { create } from 'zustand';
 import type { AppState } from './types';
+import { perturbActiveSystem, systemRef } from './systemRef';
+import { captureGhost as captureGhostToStore, clearGhosts as clearGhostStore } from './ghostStore';
 
 // Re-export everything so existing imports `from '../store/useStore'` keep working
 export type { ChaosSystem, ColorTheme, ThemeColors, SystemPreset, StoryPreset, AppState } from './types';
@@ -111,4 +113,15 @@ export const useStore = create<AppState>((set) => ({
   setAudioEnabled: (enabled) => set({ audioEnabled: enabled }),
   audioVolume: 0.3,
   setAudioVolume: (volume) => set({ audioVolume: volume }),
+
+  // Particle Swarm
+  particleSwarm: false,
+  setParticleSwarm: (enabled) => set({ particleSwarm: enabled }),
+
+  // Perturbation
+  _perturbCounter: 0,
+  perturbSystem: () => {
+    perturbActiveSystem(1.0);
+    set((s) => ({ _perturbCounter: s._perturbCounter + 1 }));
+  },
 }));

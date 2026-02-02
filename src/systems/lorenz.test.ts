@@ -198,4 +198,36 @@ describe('LorenzSystem', () => {
       expect(divergence).toBeGreaterThan(1);
     });
   });
+
+  describe('perturb', () => {
+    it('should change the system position', () => {
+      // Step a few times to get away from initial position
+      for (let i = 0; i < 50; i++) system.step(1.0);
+      const posBefore = system.getPosition();
+      system.perturb(1.0);
+      const posAfter = system.getPosition();
+      // At least one coordinate should change
+      const changed = posBefore.x !== posAfter.x || posBefore.y !== posAfter.y || posBefore.z !== posAfter.z;
+      expect(changed).toBe(true);
+    });
+
+    it('should lead to diverging trajectories', () => {
+      const sys2 = new LorenzSystem(new Vector3(1, 1, 1), { sigma: 10, rho: 28, beta: 8 / 3 });
+      // Evolve both identically
+      for (let i = 0; i < 100; i++) {
+        system.step(1.0);
+        sys2.step(1.0);
+      }
+      // Perturb one
+      system.perturb(0.5);
+      // Continue evolving
+      for (let i = 0; i < 200; i++) {
+        system.step(1.0);
+        sys2.step(1.0);
+      }
+      const p1 = system.points[system.points.length - 1];
+      const p2 = sys2.points[sys2.points.length - 1];
+      expect(p1.distanceTo(p2)).toBeGreaterThan(0.1);
+    });
+  });
 });

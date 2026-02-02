@@ -109,6 +109,16 @@ export function useKeyboardShortcuts(
           store.setBloomEnabled(!store.bloomEnabled);
           break;
 
+        case 'g':
+        case 'G':
+          store.setParticleSwarm(!store.particleSwarm);
+          break;
+
+        case 'x':
+        case 'X':
+          store.perturbSystem();
+          break;
+
         case 'Escape':
           // Close any open overlay
           if (store.storyMode) { store.setStoryMode(false); store.setCinematicCamera(false); }

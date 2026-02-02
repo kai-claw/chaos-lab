@@ -663,6 +663,34 @@
   border: 1px solid rgba(255, 150, 50, 0.1);
 }
 
+.experience-btn.swarm.active {
+  background: rgba(100, 200, 255, 0.12);
+  border-color: #66ccff;
+  color: #88ddff;
+  box-shadow: 0 0 15px rgba(100, 200, 255, 0.15);
+  animation: swarmPulse 3s ease-in-out infinite;
+}
+
+@keyframes swarmPulse {
+  0%, 100% { box-shadow: 0 0 15px rgba(100, 200, 255, 0.15); }
+  50% { box-shadow: 0 0 22px rgba(100, 200, 255, 0.3); }
+}
+
+.experience-btn.perturb {
+  background: rgba(255, 220, 50, 0.06);
+  border-color: rgba(255, 200, 50, 0.2);
+}
+.experience-btn.perturb:hover {
+  background: rgba(255, 220, 50, 0.15);
+  border-color: rgba(255, 200, 50, 0.5);
+  color: #ffdd66;
+}
+.experience-btn.perturb:active {
+  transform: scale(0.96);
+  box-shadow: 0 0 20px rgba(255, 220, 50, 0.4);
+  background: rgba(255, 220, 50, 0.25);
+}
+
 .experience-btn.story {
   background: linear-gradient(135deg, rgba(136, 100, 255, 0.1), rgba(255, 100, 200, 0.1));
   border-color: rgba(180, 130, 255, 0.3);
@@ -695,7 +723,11 @@
   }
   .experience-btn.active,
   .experience-btn.autopilot.active,
-  .experience-btn.audio.active {
+  .experience-btn.audio.active,
+  .experience-btn.swarm.active {
     animation: none;
+  }
+  .experience-btn.perturb:active {
+    transform: none;
   }
 }

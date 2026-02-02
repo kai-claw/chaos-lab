@@ -152,4 +152,17 @@ export class LorenzSystem {
   public getParams(): LorenzParams {
     return { ...this.params };
   }
+
+  /** Apply a random perturbation to the current position.
+   *  Demonstrates sensitivity to initial conditions in real-time. */
+  public perturb(amount: number): void {
+    this.position.x += (Math.random() - 0.5) * amount * 2;
+    this.position.y += (Math.random() - 0.5) * amount * 2;
+    this.position.z += (Math.random() - 0.5) * amount * 2;
+  }
+
+  /** Get the current position for external readers (e.g. ParticleSwarm init). */
+  public getPosition(): { x: number; y: number; z: number } {
+    return { x: this.position.x, y: this.position.y, z: this.position.z };
+  }
 }

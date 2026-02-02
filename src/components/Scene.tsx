@@ -11,6 +11,7 @@ import { CinematicCamera } from './CinematicCamera';
 import { ChaosAutopilot } from './ChaosAutopilot';
 import { TrailSparkles } from './TrailSparkles';
 import { EnergyPulse } from './EnergyPulse';
+import { ParticleSwarm } from './ParticleSwarm';
 import { useStore, THEMES, type ChaosSystem } from '../store/useStore';
 import { systemRef } from '../store/systemRef';
 import type { PendulumState } from '../systems/doublePendulum';
@@ -230,6 +231,7 @@ const SceneContent: React.FC = () => {
       <ChaosAutopilot />
       <TrailSparkles />
       <EnergyPulse />
+      <ParticleSwarm />
       <DynamicBloom />
     </>
   );

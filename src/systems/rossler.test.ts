@@ -98,4 +98,15 @@ describe('RosslerSystem', () => {
       expect(periodic.lyapunovExponent).toBeLessThan(0.5);
     });
   });
+
+  describe('perturb', () => {
+    it('should displace the current position', () => {
+      for (let i = 0; i < 50; i++) system.step(1.0);
+      const before = system.getPosition();
+      system.perturb(1.0);
+      const after = system.getPosition();
+      const changed = before.x !== after.x || before.y !== after.y || before.z !== after.z;
+      expect(changed).toBe(true);
+    });
+  });
 });
