@@ -705,6 +705,42 @@
   outline-offset: 2px;
 }
 
+/* ─── New creative feature buttons ─── */
+.experience-btn.exposure.active {
+  background: rgba(255, 200, 100, 0.12);
+  border-color: #ffcc66;
+  color: #ffdd88;
+  box-shadow: 0 0 15px rgba(255, 200, 100, 0.15);
+  animation: exposurePulse 4s ease-in-out infinite;
+}
+
+@keyframes exposurePulse {
+  0%, 100% { box-shadow: 0 0 15px rgba(255, 200, 100, 0.15); }
+  50% { box-shadow: 0 0 20px rgba(255, 200, 100, 0.3); }
+}
+
+.experience-btn.shadow.active {
+  background: rgba(150, 180, 255, 0.12);
+  border-color: #99bbff;
+  color: #aaccff;
+  box-shadow: 0 0 12px rgba(150, 180, 255, 0.15);
+}
+
+.experience-btn.ghost-capture {
+  background: rgba(200, 150, 255, 0.06);
+  border-color: rgba(200, 150, 255, 0.2);
+}
+.experience-btn.ghost-capture:hover {
+  background: rgba(200, 150, 255, 0.15);
+  border-color: rgba(200, 150, 255, 0.5);
+  color: #cc99ff;
+}
+.experience-btn.ghost-capture:active {
+  transform: scale(0.96);
+  box-shadow: 0 0 20px rgba(200, 150, 255, 0.4);
+  background: rgba(200, 150, 255, 0.25);
+}
+
 .autopilot-hint {
   margin-top: 6px;
   font-size: 10px;
@@ -714,6 +750,27 @@
   padding: 4px 8px;
   background: rgba(255, 255, 255, 0.02);
   border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.hint-action-btn {
+  font-size: 9px;
+  padding: 2px 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+  color: var(--text-muted, rgba(255, 255, 255, 0.6));
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-left: auto;
+}
+.hint-action-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: var(--text-color, #ccc);
 }
 
 /* ─── Reduced Motion for experience buttons ─── */
@@ -724,7 +781,8 @@
   .experience-btn.active,
   .experience-btn.autopilot.active,
   .experience-btn.audio.active,
-  .experience-btn.swarm.active {
+  .experience-btn.swarm.active,
+  .experience-btn.exposure.active {
     animation: none;
   }
   .experience-btn.perturb:active {

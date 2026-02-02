@@ -64,10 +64,16 @@ export const RosslerAttractor: React.FC<RosslerAttractorProps> = ({
     rosslerSystem.step(speed * 0.5);
     rosslerSystem.trimTrail(trailLength);
 
+    // Update divergence tracking ref (reuse vector — avoid per-frame clone)
     const pts = rosslerSystem.points;
     if (lastPosRef && pts.length > 0) {
       const last = pts[pts.length - 1];
-      (lastPosRef as React.MutableRefObject<THREE.Vector3 | null>).current = last.clone();
+      const ref = lastPosRef as React.MutableRefObject<THREE.Vector3 | null>;
+      if (ref.current) {
+        ref.current.set(last.x, last.y, last.z);
+      } else {
+        ref.current = new THREE.Vector3(last.x, last.y, last.z);
+      }
     }
 
     // Update Lyapunov (throttled, only primary and only when rossler is active)
@@ -81,7 +87,8 @@ export const RosslerAttractor: React.FC<RosslerAttractorProps> = ({
 
   const hStart = isSecondary ? theme.trailHue2 : theme.trailHue1;
   const hEnd = hStart + 0.25;
-  const headColor = new THREE.Color().setHSL(hStart + 0.15, 1, 0.8);
+  // Memoize headColor — only recompute when hue changes (not every render)
+  const headColor = useMemo(() => new THREE.Color().setHSL(hStart + 0.15, 1, 0.8), [hStart]);
 
   return (
     <group ref={groupRef} position={position}>

@@ -49,20 +49,23 @@ export class DoublePendulumSystem {
     this.points = [new Vector3(pos.p2.x, pos.p2.y, 0)];
   }
 
+  /** Scratch Vector2s for calculatePositions — avoids per-call allocation */
+  private _p1 = new Vector2();
+  private _p2 = new Vector2();
+
   private calculatePositions(): { p1: Vector2; p2: Vector2 } {
     const { length1, length2 } = this.params;
     const { theta1, theta2 } = this.state;
 
-    const p1 = new Vector2(
-      length1 * Math.sin(theta1),
-      -length1 * Math.cos(theta1)
-    );
-    const p2 = new Vector2(
-      p1.x + length2 * Math.sin(theta2),
-      p1.y - length2 * Math.cos(theta2)
+    const p1x = length1 * Math.sin(theta1);
+    const p1y = -length1 * Math.cos(theta1);
+    this._p1.set(p1x, p1y);
+    this._p2.set(
+      p1x + length2 * Math.sin(theta2),
+      p1y - length2 * Math.cos(theta2)
     );
 
-    return { p1, p2 };
+    return { p1: this._p1, p2: this._p2 };
   }
 
   /** Compute angular accelerations for given state */

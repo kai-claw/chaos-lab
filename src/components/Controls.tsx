@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useStore, PRESETS, THEMES, type ChaosSystem, type ColorTheme } from '../store/useStore';
+import { getGhostCount } from '../store/ghostStore';
 import './Controls.css';
 
 const THEME_LABELS: Record<ColorTheme, string> = {
@@ -53,6 +54,9 @@ export const Controls: React.FC = () => {
     audioVolume, setAudioVolume,
     particleSwarm, setParticleSwarm,
     perturbSystem,
+    captureGhost, clearGhosts, _ghostVersion,
+    showFloorShadow, setShowFloorShadow,
+    exposureMode, setExposureMode, clearExposure,
   } = useStore();
 
   const theme = THEMES[colorTheme];
@@ -373,6 +377,29 @@ export const Controls: React.FC = () => {
                 ⚡ Perturb
               </button>
               <button
+                className={`experience-btn exposure ${exposureMode ? 'active' : ''}`}
+                onClick={() => setExposureMode(!exposureMode)}
+                aria-pressed={exposureMode}
+                aria-label="Toggle exposure mode — long-exposure point cloud accumulation"
+              >
+                📷 Exposure
+              </button>
+              <button
+                className={`experience-btn shadow ${showFloorShadow ? 'active' : ''}`}
+                onClick={() => setShowFloorShadow(!showFloorShadow)}
+                aria-pressed={showFloorShadow}
+                aria-label="Toggle floor shadow — 2D projection beneath the attractor"
+              >
+                🪞 Shadow
+              </button>
+              <button
+                className="experience-btn ghost-capture"
+                onClick={captureGhost}
+                aria-label="Capture ghost — freeze current trail as a translucent hologram"
+              >
+                📸 Capture
+              </button>
+              <button
                 className="experience-btn story"
                 onClick={() => {
                   setStoryMode(true);
@@ -409,6 +436,35 @@ export const Controls: React.FC = () => {
             {particleSwarm && (
               <div className="autopilot-hint">
                 🐦 200 particles are swarming through the attractor...
+              </div>
+            )}
+            {exposureMode && (
+              <div className="autopilot-hint">
+                📷 Accumulating points... Press E to toggle, Shift+E to clear
+                <button
+                  className="hint-action-btn"
+                  onClick={clearExposure}
+                  aria-label="Clear exposure cloud"
+                >
+                  Clear
+                </button>
+              </div>
+            )}
+            {_ghostVersion > 0 && getGhostCount() > 0 && (
+              <div className="autopilot-hint">
+                📸 {getGhostCount()} ghost{getGhostCount() !== 1 ? 's' : ''} captured (F to add, Shift+F to clear)
+                <button
+                  className="hint-action-btn"
+                  onClick={clearGhosts}
+                  aria-label="Clear all ghost trails"
+                >
+                  Clear
+                </button>
+              </div>
+            )}
+            {showFloorShadow && currentSystem !== 'doublePendulum' && (
+              <div className="autopilot-hint">
+                🪞 Showing 2D shadow projection below the attractor
               </div>
             )}
           </div>

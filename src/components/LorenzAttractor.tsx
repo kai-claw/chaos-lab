@@ -68,11 +68,16 @@ export const LorenzAttractor: React.FC<LorenzAttractorProps> = ({
     lorenzSystem.step(speed * 0.5);
     lorenzSystem.trimTrail(trailLength);
 
-    // Update divergence tracking ref
+    // Update divergence tracking ref (reuse vector — avoid per-frame clone)
     const pts = lorenzSystem.points;
     if (lastPosRef && pts.length > 0) {
       const last = pts[pts.length - 1];
-      (lastPosRef as React.MutableRefObject<THREE.Vector3 | null>).current = last.clone();
+      const ref = lastPosRef as React.MutableRefObject<THREE.Vector3 | null>;
+      if (ref.current) {
+        ref.current.set(last.x, last.y, last.z);
+      } else {
+        ref.current = new THREE.Vector3(last.x, last.y, last.z);
+      }
     }
 
     // Update Lyapunov indicator (throttled, only primary)
@@ -86,7 +91,8 @@ export const LorenzAttractor: React.FC<LorenzAttractorProps> = ({
 
   const hStart = isSecondary ? theme.trailHue2 : theme.trailHue1;
   const hEnd = hStart + 0.2;
-  const headColor = new THREE.Color().setHSL(hStart + 0.15, 1, 0.7);
+  // Memoize headColor — only recompute when hue changes (not every render)
+  const headColor = useMemo(() => new THREE.Color().setHSL(hStart + 0.15, 1, 0.7), [hStart]);
 
   return (
     <group ref={groupRef} position={position}>

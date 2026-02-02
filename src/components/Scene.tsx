@@ -12,6 +12,10 @@ import { ChaosAutopilot } from './ChaosAutopilot';
 import { TrailSparkles } from './TrailSparkles';
 import { EnergyPulse } from './EnergyPulse';
 import { ParticleSwarm } from './ParticleSwarm';
+import { GhostTrails } from './GhostTrails';
+import { FloorShadow } from './FloorShadow';
+import { ExposureCloud } from './ExposureCloud';
+import { PerformanceMonitor } from './PerformanceMonitor';
 import { useStore, THEMES, type ChaosSystem } from '../store/useStore';
 import { systemRef } from '../store/systemRef';
 import type { PendulumState } from '../systems/doublePendulum';
@@ -230,9 +234,13 @@ const SceneContent: React.FC = () => {
       <CinematicCamera />
       <ChaosAutopilot />
       <TrailSparkles />
+      <GhostTrails />
+      <FloorShadow />
+      <ExposureCloud />
       <EnergyPulse />
       <ParticleSwarm />
       <DynamicBloom />
+      <PerformanceMonitor />
     </>
   );
 };
@@ -301,7 +309,9 @@ export const Scene: React.FC = () => {
       >
         <Canvas
           camera={{ position: cam.position, fov: cam.fov }}
-          gl={{ antialias: true, alpha: true, powerPreference: 'high-performance', preserveDrawingBuffer: true }}
+          dpr={[1, 2]} /* Clamp device pixel ratio: prevents 3x on high-DPI phones */
+          gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
+          performance={{ min: 0.5 }} /* Allow R3F to lower resolution under load */
         >
           <color attach="background" args={[theme.bg]} />
           <fog attach="fog" args={[theme.bg, 30, 60]} />

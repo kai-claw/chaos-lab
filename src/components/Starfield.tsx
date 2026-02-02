@@ -35,12 +35,18 @@ export const Starfield: React.FC = () => {
   // Cache the star color to avoid creating a new THREE.Color every render
   const starColor = useMemo(() => new THREE.Color(theme.starColor), [theme.starColor]);
 
+  const frameCount = useRef(0);
+
   useFrame(({ clock }) => {
     if (!pointsRef.current) return;
     const t = clock.getElapsedTime();
     const rot = t * ROTATION_SPEED;
     pointsRef.current.rotation.y = rot;
     pointsRef.current.rotation.x = rot * 0.3;
+
+    // Throttle twinkling to every 3rd frame (~20fps update is visually fine)
+    frameCount.current++;
+    if (frameCount.current % 3 !== 0) return;
 
     // Twinkle: modulate sizes with sin wave per star
     for (let i = 0; i < STAR_COUNT; i++) {

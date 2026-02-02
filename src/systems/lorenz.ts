@@ -79,7 +79,7 @@ export class LorenzSystem {
       this.position.set(1, 1, 1);
     }
 
-    this.points.push(this.position.clone());
+    this.points.push(new Vector3(this.position.x, this.position.y, this.position.z));
 
     // --- Lyapunov exponent via variational equation ---
     const px = this.perturbation.x;
@@ -115,7 +115,7 @@ export class LorenzSystem {
     this.prevDz = currentDz;
     this.prevZ = this.position.z;
 
-    return this.position.clone();
+    return this.position;
   }
 
   public reset(initialPosition: Vector3 = new Vector3(1, 1, 1)): void {

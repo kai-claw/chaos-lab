@@ -110,6 +110,9 @@ export function useKeyboardShortcuts(
           break;
 
         case 'g':
+          store.setParticleSwarm(!store.particleSwarm);
+          break;
+
         case 'G':
           store.setParticleSwarm(!store.particleSwarm);
           break;
@@ -117,6 +120,30 @@ export function useKeyboardShortcuts(
         case 'x':
         case 'X':
           store.perturbSystem();
+          break;
+
+        case 'f':
+          store.captureGhost();
+          break;
+
+        case 'F':
+          store.clearGhosts();
+          break;
+
+        case 'd':
+          store.setShowFloorShadow(!store.showFloorShadow);
+          break;
+
+        case 'D':
+          store.setShowFloorShadow(!store.showFloorShadow);
+          break;
+
+        case 'e':
+          store.setExposureMode(!store.exposureMode);
+          break;
+
+        case 'E':
+          store.clearExposure();
           break;
 
         case 'Escape':

@@ -38,7 +38,7 @@ function useReducedMotion() {
 }
 
 function App() {
-  const { colorTheme, currentSystem, _perturbCounter } = useStore();
+  const { colorTheme, currentSystem, _perturbCounter, showPerformanceWarning, setShowPerformanceWarning } = useStore();
   const theme = THEMES[colorTheme];
   const [showHelp, setShowHelp] = useState(false);
   const [entered, setEntered] = useState(false);
@@ -128,6 +128,33 @@ function App() {
       <StoryMode />
       <QuickStart />
       <ChaosSynth />
+
+      {/* Performance warning — auto-shown when frame rate drops */}
+      {showPerformanceWarning && (
+        <div
+          className="performance-warning"
+          role="alert"
+          style={{
+            position: 'fixed', bottom: '12px', left: '50%', transform: 'translateX(-50%)',
+            background: 'rgba(200, 120, 0, 0.9)', color: '#fff', padding: '8px 20px',
+            borderRadius: '8px', fontSize: '13px', fontFamily: 'system-ui, sans-serif',
+            zIndex: 1000, backdropFilter: 'blur(8px)', display: 'flex',
+            alignItems: 'center', gap: '10px', boxShadow: '0 2px 12px rgba(0,0,0,0.4)',
+          }}
+        >
+          <span>⚠️ Low FPS detected — try reducing trail length or disabling particle swarm</span>
+          <button
+            onClick={() => setShowPerformanceWarning(false)}
+            style={{
+              background: 'rgba(255,255,255,0.2)', border: 'none', color: '#fff',
+              borderRadius: '4px', padding: '2px 8px', cursor: 'pointer', fontSize: '12px',
+            }}
+            aria-label="Dismiss performance warning"
+          >
+            ✕
+          </button>
+        </div>
+      )}
 
       {/* Title overlay — fades after entrance, returns on hover */}
       <div

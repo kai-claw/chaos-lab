@@ -78,7 +78,7 @@ export class RosslerSystem {
       this.position.set(1, 1, 1);
     }
 
-    this.points.push(this.position.clone());
+    this.points.push(new Vector3(this.position.x, this.position.y, this.position.z));
 
     // --- Lyapunov exponent ---
     const px = this.perturbation.x;
@@ -111,7 +111,7 @@ export class RosslerSystem {
     }
     this.prevY = this.position.y;
 
-    return this.position.clone();
+    return this.position;
   }
 
   public reset(initialPosition: Vector3 = new Vector3(1, 1, 1)): void {

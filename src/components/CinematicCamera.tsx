@@ -8,6 +8,9 @@ import { systemRef } from '../store/systemRef';
  * Cinematic Chase Camera — follows the trail head through the attractor.
  * Creates a mesmerizing first-person flythrough experience.
  * Smooth exponential lerping prevents nausea-inducing jerks.
+ *
+ * Performance: all Vector3/Euler objects are pre-allocated as refs to
+ * eliminate per-frame GC pressure (~10 allocs/frame → 0).
  */
 
 const SCALE_MAP: Record<string, number> = {
@@ -49,6 +52,15 @@ export const CinematicCamera: React.FC = () => {
   const savedCameraRot = useRef(new THREE.Euler());
   const transitionProgress = useRef(0);
 
+  // Pre-allocated scratch vectors — reused every frame (zero alloc hot path)
+  const _velocity = useRef(new THREE.Vector3());
+  const _headWorld = useRef(new THREE.Vector3());
+  const _targetPos = useRef(new THREE.Vector3());
+  const _lookTarget = useRef(new THREE.Vector3());
+  const _side = useRef(new THREE.Vector3());
+  const _offset = useRef(new THREE.Vector3());
+  const _up = useRef(new THREE.Vector3(0, 1, 0));
+
   useFrame(() => {
     // Save camera state when first activating
     if (cinematicCamera && !wasActive.current) {
@@ -83,10 +95,8 @@ export const CinematicCamera: React.FC = () => {
     const head = pts[headIdx];
     const behind = pts[behindIdx];
 
-    // Velocity direction (normalized)
-    const velocity = new THREE.Vector3()
-      .subVectors(head, behind)
-      .normalize();
+    // Velocity direction (reuse pre-allocated vector)
+    const velocity = _velocity.current.subVectors(head, behind).normalize();
 
     // If velocity is essentially zero, use a default direction
     if (velocity.lengthSq() < 0.001) {
@@ -96,45 +106,43 @@ export const CinematicCamera: React.FC = () => {
     // For double pendulum (2D), fix camera approach
     const is2D = currentSystem === 'doublePendulum';
 
-    let targetPos: THREE.Vector3;
-    let lookTarget: THREE.Vector3;
+    const targetPos = _targetPos.current;
+    const lookTarget = _lookTarget.current;
 
     if (is2D) {
       // 2D: Camera sits in front (z-axis) tracking the pendulum tip
-      const headWorld = new THREE.Vector3(head.x * scale, head.y * scale, 0);
-      targetPos = new THREE.Vector3(
-        headWorld.x * 0.3, // Slightly offset from center
-        headWorld.y * 0.3 + 0.5,
-        followDist
-      );
-      lookTarget = headWorld;
+      const hwX = head.x * scale;
+      const hwY = head.y * scale;
+      targetPos.set(hwX * 0.3, hwY * 0.3 + 0.5, followDist);
+      lookTarget.set(hwX, hwY, 0);
     } else {
       // 3D: Camera follows behind the trajectory with height offset
-      const headWorld = new THREE.Vector3(
+      const headWorld = _headWorld.current.set(
         head.x * scale,
         head.y * scale,
         head.z * scale
       );
 
       // Up vector — try to keep camera above
-      const up = new THREE.Vector3(0, 1, 0);
-      const side = new THREE.Vector3().crossVectors(velocity, up);
+      const up = _up.current.set(0, 1, 0);
+      const side = _side.current.crossVectors(velocity, up);
       if (side.lengthSq() < 0.001) {
         side.set(1, 0, 0); // Fallback
       }
       side.normalize();
 
       // Camera position: behind the head + up + slight side offset
-      const offset = velocity.clone().multiplyScalar(-followDist * scale)
-        .add(up.clone().multiplyScalar(heightOff * scale))
-        .add(side.clone().multiplyScalar(0.15 * scale));
+      // Build offset in-place without cloning
+      const offset = _offset.current.copy(velocity).multiplyScalar(-followDist * scale);
+      offset.x += up.x * heightOff * scale + side.x * 0.15 * scale;
+      offset.y += up.y * heightOff * scale + side.y * 0.15 * scale;
+      offset.z += up.z * heightOff * scale + side.z * 0.15 * scale;
 
-      targetPos = headWorld.clone().add(offset);
+      targetPos.copy(headWorld).add(offset);
 
-      // Look ahead of the head
-      const lookAheadIdx = Math.min(headIdx, pts.length - 1);
-      const lookAhead = pts[lookAheadIdx];
-      lookTarget = new THREE.Vector3(
+      // Look ahead of the head (same as head for now)
+      const lookAhead = pts[headIdx];
+      lookTarget.set(
         lookAhead.x * scale,
         lookAhead.y * scale,
         lookAhead.z * scale

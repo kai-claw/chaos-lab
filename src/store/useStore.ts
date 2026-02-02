@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import type { AppState } from './types';
 import { perturbActiveSystem, systemRef } from './systemRef';
 import { captureGhost as captureGhostToStore, clearGhosts as clearGhostStore } from './ghostStore';
+import { THEMES } from './themes';
 
 // Re-export everything so existing imports `from '../store/useStore'` keep working
 export type { ChaosSystem, ColorTheme, ThemeColors, SystemPreset, StoryPreset, AppState } from './types';
@@ -124,4 +125,30 @@ export const useStore = create<AppState>((set) => ({
     perturbActiveSystem(1.0);
     set((s) => ({ _perturbCounter: s._perturbCounter + 1 }));
   },
+
+  // Ghost trail capture
+  _ghostVersion: 0,
+  captureGhost: () => {
+    const system = systemRef.system;
+    const sysType = systemRef.type;
+    if (!system?.points || system.points.length < 10 || !sysType) return;
+    const state = useStore.getState();
+    const hue = THEMES[state.colorTheme].trailHue1;
+    captureGhostToStore(system.points, sysType, hue);
+    set((s) => ({ _ghostVersion: s._ghostVersion + 1 }));
+  },
+  clearGhosts: () => {
+    clearGhostStore();
+    set((s) => ({ _ghostVersion: s._ghostVersion + 1 }));
+  },
+
+  // Floor shadow projection
+  showFloorShadow: false,
+  setShowFloorShadow: (show) => set({ showFloorShadow: show }),
+
+  // Exposure mode
+  exposureMode: false,
+  setExposureMode: (enabled) => set({ exposureMode: enabled }),
+  _exposureClearCounter: 0,
+  clearExposure: () => set((s) => ({ _exposureClearCounter: s._exposureClearCounter + 1 })),
 }));
