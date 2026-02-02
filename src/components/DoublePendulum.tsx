@@ -1,151 +1,134 @@
 import React, { useRef, useEffect, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Line } from '@react-three/drei';
 import * as THREE from 'three';
 import { DoublePendulumSystem } from '../systems/doublePendulum';
-import { useStore } from '../store/useStore';
+import { useStore, THEMES } from '../store/useStore';
+import { GradientTrail } from './GradientTrail';
 
 interface DoublePendulumProps {
   position?: [number, number, number];
   scale?: number;
   initialCondition?: { theta1: number; theta2: number; omega1: number; omega2: number };
   colorHue?: number;
+  isSecondary?: boolean;
+  lastPosRef?: React.RefObject<THREE.Vector3 | null>;
 }
 
 export const DoublePendulum: React.FC<DoublePendulumProps> = ({
   position = [0, 0, 0],
   scale = 1.0,
   initialCondition = { theta1: Math.PI / 2, theta2: Math.PI / 2, omega1: 0, omega2: 0 },
-  colorHue = 0.9,
+  isSecondary = false,
+  lastPosRef,
 }) => {
   const groupRef = useRef<THREE.Group>(null);
   const { 
-    isPlaying, 
-    speed, 
-    trailLength, 
-    doublePendulumParams,
-    resetSimulation 
+    isPlaying, speed, trailLength, doublePendulumParams, _resetCounter, colorTheme,
   } = useStore();
+  const theme = THEMES[colorTheme];
   
   const pendulumSystem = useMemo(() => {
     return new DoublePendulumSystem(initialCondition, doublePendulumParams);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    initialCondition.theta1, 
-    initialCondition.theta2, 
-    initialCondition.omega1, 
-    initialCondition.omega2,
-    doublePendulumParams.mass1,
-    doublePendulumParams.mass2,
-    doublePendulumParams.length1,
-    doublePendulumParams.length2,
-    doublePendulumParams.gravity,
-    doublePendulumParams.damping
+    initialCondition.theta1, initialCondition.theta2,
+    initialCondition.omega1, initialCondition.omega2,
+    doublePendulumParams.mass1, doublePendulumParams.mass2,
+    doublePendulumParams.length1, doublePendulumParams.length2,
+    doublePendulumParams.gravity, doublePendulumParams.damping,
   ]);
 
-  // Listen for reset
-  const prevResetTime = useRef(Date.now());
   useEffect(() => {
-    const newTime = Date.now();
-    if (newTime - prevResetTime.current > 50) { // debounce
-      pendulumSystem.reset(initialCondition);
-      prevResetTime.current = newTime;
-    }
-  }, [resetSimulation, pendulumSystem, initialCondition]);
+    pendulumSystem.reset(initialCondition);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [_resetCounter]);
 
-  // Update parameters when they change
   useEffect(() => {
     pendulumSystem.updateParams(doublePendulumParams);
   }, [doublePendulumParams, pendulumSystem]);
 
+  const scaledPoints = useRef<THREE.Vector3[]>([]);
+
   useFrame(() => {
     if (!isPlaying) return;
-    
-    // Step the simulation
     pendulumSystem.step(speed * 2.0);
-    
-    // Trim trail
     pendulumSystem.trimTrail(trailLength);
+
+    const pts = pendulumSystem.points;
+    const sp: THREE.Vector3[] = [];
+    for (let i = 0; i < pts.length; i++) {
+      sp.push(new THREE.Vector3(pts[i].x * scale, pts[i].y * scale, 0));
+    }
+    scaledPoints.current = sp;
+
+    if (lastPosRef && pts.length > 0) {
+      const last = pts[pts.length - 1];
+      (lastPosRef as React.MutableRefObject<THREE.Vector3 | null>).current = new THREE.Vector3(last.x, last.y, 0);
+    }
   });
 
-  // Get current pendulum positions
   const currentPos = pendulumSystem.positions.length > 0 
     ? pendulumSystem.getCurrentPositions()
     : { p1: { x: 0, y: 0 }, p2: { x: 0, y: 0 } };
 
-  // Create trail geometry (second pendulum tip)
-  const trailGeometry = useMemo(() => {
-    const points = pendulumSystem.points.map(p => 
-      new THREE.Vector3(p.x * scale, p.y * scale, 0)
-    );
-    return points;
-  }, [pendulumSystem.points, scale]);
+  const hStart = isSecondary ? theme.trailHue2 : theme.trailHue1;
+  const hEnd = hStart + 0.2;
+  const rodColor = new THREE.Color(theme.textMuted);
+  const mass1Color = new THREE.Color().setHSL(hStart, 0.8, 0.6);
+  const mass2Color = new THREE.Color().setHSL(hStart + 0.1, 0.8, 0.7);
 
-  // Create color array for trail
-  const colors = useMemo(() => {
-    const colorsArray = [];
-    for (let i = 0; i < pendulumSystem.points.length; i++) {
-      const t = i / Math.max(1, pendulumSystem.points.length - 1);
-      const alpha = Math.pow(t, 2); // fade older parts
-      const color = new THREE.Color();
-      color.setHSL(colorHue, 0.8, 0.3 + alpha * 0.6);
-      colorsArray.push(color.r, color.g, color.b);
-    }
-    return colorsArray;
-  }, [pendulumSystem.points, colorHue]);
-
-  // Pendulum rod geometry
-  const rod1Points = [
-    new THREE.Vector3(0, 0, 0),
-    new THREE.Vector3(currentPos.p1.x * scale, currentPos.p1.y * scale, 0)
-  ];
-  
-  const rod2Points = [
-    new THREE.Vector3(currentPos.p1.x * scale, currentPos.p1.y * scale, 0),
-    new THREE.Vector3(currentPos.p2.x * scale, currentPos.p2.y * scale, 0)
-  ];
+  // Rod endpoints
+  const rod1End = [currentPos.p1.x * scale, currentPos.p1.y * scale, 0] as const;
+  const rod2End = [currentPos.p2.x * scale, currentPos.p2.y * scale, 0] as const;
 
   return (
     <group ref={groupRef} position={position}>
-      {/* Trail of second pendulum */}
-      {trailGeometry.length > 1 && (
-        <Line
-          points={trailGeometry}
-          color="white"
-          lineWidth={1.5}
-          // @ts-ignore - Line component accepts these props
-          vertexColors={colors}
-        />
-      )}
-      
-      {/* Pendulum rods */}
-      <Line
-        points={rod1Points}
-        color="#888888"
-        lineWidth={3}
+      <GradientTrail
+        points={scaledPoints.current}
+        hueStart={hStart}
+        hueEnd={hEnd}
+        lineWidth={1.8}
+        glowIntensity={0.4}
       />
       
-      <Line
-        points={rod2Points}
-        color="#AAAAAA"
-        lineWidth={3}
-      />
+      {/* Rod 1 */}
+      <line>
+        <bufferGeometry>
+          <bufferAttribute
+            attach="attributes-position"
+            args={[new Float32Array([0, 0, 0, ...rod1End]), 3]}
+          />
+        </bufferGeometry>
+        <lineBasicMaterial color={rodColor} linewidth={2} transparent opacity={0.6} />
+      </line>
       
-      {/* Pivot point */}
+      {/* Rod 2 */}
+      <line>
+        <bufferGeometry>
+          <bufferAttribute
+            attach="attributes-position"
+            args={[new Float32Array([...rod1End, ...rod2End]), 3]}
+          />
+        </bufferGeometry>
+        <lineBasicMaterial color={rodColor} linewidth={2} transparent opacity={0.6} />
+      </line>
+      
+      {/* Pivot */}
       <mesh position={[0, 0, 0]}>
-        <sphereGeometry args={[0.02]} />
-        <meshBasicMaterial color="#FFFFFF" />
+        <sphereGeometry args={[0.03, 12, 12]} />
+        <meshBasicMaterial color="#ffffff" transparent opacity={0.7} />
       </mesh>
       
-      {/* First pendulum mass */}
-      <mesh position={[currentPos.p1.x * scale, currentPos.p1.y * scale, 0]}>
-        <sphereGeometry args={[0.05 * Math.sqrt(doublePendulumParams.mass1)]} />
-        <meshBasicMaterial color={new THREE.Color().setHSL(colorHue, 0.8, 0.6)} />
+      {/* Mass 1 */}
+      <mesh position={[rod1End[0], rod1End[1], rod1End[2]]}>
+        <sphereGeometry args={[0.06 * Math.sqrt(doublePendulumParams.mass1), 16, 16]} />
+        <meshBasicMaterial color={mass1Color} />
       </mesh>
       
-      {/* Second pendulum mass */}
-      <mesh position={[currentPos.p2.x * scale, currentPos.p2.y * scale, 0]}>
-        <sphereGeometry args={[0.05 * Math.sqrt(doublePendulumParams.mass2)]} />
-        <meshBasicMaterial color={new THREE.Color().setHSL(colorHue + 0.1, 0.8, 0.7)} />
+      {/* Mass 2 */}
+      <mesh position={[rod2End[0], rod2End[1], rod2End[2]]}>
+        <sphereGeometry args={[0.06 * Math.sqrt(doublePendulumParams.mass2), 16, 16]} />
+        <meshBasicMaterial color={mass2Color} />
       </mesh>
     </group>
   );

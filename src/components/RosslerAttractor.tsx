@@ -1,105 +1,90 @@
 import React, { useRef, useEffect, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Line } from '@react-three/drei';
 import * as THREE from 'three';
 import { RosslerSystem } from '../systems/rossler';
-import { useStore } from '../store/useStore';
+import { useStore, THEMES } from '../store/useStore';
+import { GradientTrail } from './GradientTrail';
 
 interface RosslerAttractorProps {
   position?: [number, number, number];
   scale?: number;
   initialCondition?: [number, number, number];
   colorHue?: number;
+  isSecondary?: boolean;
+  lastPosRef?: React.RefObject<THREE.Vector3 | null>;
 }
 
 export const RosslerAttractor: React.FC<RosslerAttractorProps> = ({
   position = [0, 0, 0],
   scale = 0.5,
   initialCondition = [1, 1, 1],
-  colorHue = 0.1,
+  isSecondary = false,
+  lastPosRef,
 }) => {
   const groupRef = useRef<THREE.Group>(null);
   const { 
-    isPlaying, 
-    speed, 
-    trailLength, 
-    rosslerParams,
-    resetSimulation 
+    isPlaying, speed, trailLength, rosslerParams, _resetCounter, colorTheme,
   } = useStore();
+  const theme = THEMES[colorTheme];
   
   const rosslerSystem = useMemo(() => {
     const initialPos = new THREE.Vector3(...initialCondition);
     return new RosslerSystem(initialPos, rosslerParams);
-  }, [initialCondition, rosslerParams.a, rosslerParams.b, rosslerParams.c]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialCondition[0], initialCondition[1], initialCondition[2], rosslerParams.a, rosslerParams.b, rosslerParams.c]);
 
-  // Listen for reset
-  const prevResetTime = useRef(Date.now());
   useEffect(() => {
-    const newTime = Date.now();
-    if (newTime - prevResetTime.current > 50) { // debounce
-      rosslerSystem.reset(new THREE.Vector3(...initialCondition));
-      prevResetTime.current = newTime;
-    }
-  }, [resetSimulation, rosslerSystem, initialCondition]);
+    rosslerSystem.reset(new THREE.Vector3(...initialCondition));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [_resetCounter]);
 
-  // Update parameters when they change
   useEffect(() => {
     rosslerSystem.updateParams(rosslerParams);
   }, [rosslerParams, rosslerSystem]);
 
+  const scaledPoints = useRef<THREE.Vector3[]>([]);
+
   useFrame(() => {
     if (!isPlaying) return;
-    
-    // Step the simulation
     rosslerSystem.step(speed * 0.5);
-    
-    // Trim trail
     rosslerSystem.trimTrail(trailLength);
+
+    const pts = rosslerSystem.points;
+    const sp: THREE.Vector3[] = [];
+    for (let i = 0; i < pts.length; i++) {
+      sp.push(new THREE.Vector3(pts[i].x * scale, pts[i].y * scale, pts[i].z * scale));
+    }
+    scaledPoints.current = sp;
+
+    if (lastPosRef && pts.length > 0) {
+      const last = pts[pts.length - 1];
+      (lastPosRef as React.MutableRefObject<THREE.Vector3 | null>).current = last.clone();
+    }
   });
 
-  // Create trail geometry
-  const trailGeometry = useMemo(() => {
-    const points = rosslerSystem.points.map(p => 
-      new THREE.Vector3(p.x * scale, p.y * scale, p.z * scale)
-    );
-    return points;
-  }, [rosslerSystem.points, scale]);
-
-  // Create color array for time-based coloring
-  const colors = useMemo(() => {
-    const colorsArray = [];
-    for (let i = 0; i < rosslerSystem.points.length; i++) {
-      const t = i / Math.max(1, rosslerSystem.points.length - 1);
-      const color = new THREE.Color();
-      color.setHSL(colorHue + t * 0.4, 0.9, 0.4 + t * 0.5);
-      colorsArray.push(color.r, color.g, color.b);
-    }
-    return colorsArray;
-  }, [rosslerSystem.points, colorHue]);
+  const hStart = isSecondary ? theme.trailHue2 : theme.trailHue1;
+  const hEnd = hStart + 0.25;
+  const headColor = new THREE.Color().setHSL(hStart + 0.15, 1, 0.8);
 
   return (
     <group ref={groupRef} position={position}>
-      {trailGeometry.length > 1 && (
-        <Line
-          points={trailGeometry}
-          color="white"
-          lineWidth={2}
-          // @ts-ignore - Line component accepts these props
-          vertexColors={colors}
-        />
-      )}
+      <GradientTrail
+        points={scaledPoints.current}
+        hueStart={hStart}
+        hueEnd={hEnd}
+        lineWidth={2.5}
+        glowIntensity={0.5}
+      />
       
-      {/* Current position marker */}
-      {rosslerSystem.points.length > 0 && (
-        <mesh position={[
-          rosslerSystem.points[rosslerSystem.points.length - 1].x * scale,
-          rosslerSystem.points[rosslerSystem.points.length - 1].y * scale,
-          rosslerSystem.points[rosslerSystem.points.length - 1].z * scale,
-        ]}>
-          <sphereGeometry args={[0.03]} />
-          <meshBasicMaterial color={new THREE.Color().setHSL(colorHue, 1, 0.8)} />
-        </mesh>
-      )}
+      {rosslerSystem.points.length > 0 && (() => {
+        const last = rosslerSystem.points[rosslerSystem.points.length - 1];
+        return (
+          <mesh position={[last.x * scale, last.y * scale, last.z * scale]}>
+            <sphereGeometry args={[0.05, 12, 12]} />
+            <meshBasicMaterial color={headColor} transparent opacity={0.9} />
+          </mesh>
+        );
+      })()}
     </group>
   );
 };

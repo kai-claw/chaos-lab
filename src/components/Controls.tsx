@@ -1,49 +1,57 @@
-import React, { useState } from 'react';
-import { useStore, PRESETS, type ChaosSystem } from '../store/useStore';
+import React, { useState, useEffect } from 'react';
+import { useStore, PRESETS, THEMES, type ChaosSystem, type ColorTheme } from '../store/useStore';
 import './Controls.css';
+
+const THEME_LABELS: Record<ColorTheme, string> = {
+  classic: '🌌 Classic',
+  neon: '💜 Neon',
+  blueprint: '📐 Blueprint',
+  terminal: '💻 Terminal',
+};
 
 export const Controls: React.FC = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
+
   const {
-    currentSystem,
-    setCurrentSystem,
-    isPlaying,
-    setIsPlaying,
-    speed,
-    setSpeed,
-    trailLength,
-    setTrailLength,
-    sideBySideMode,
-    setSideBySideMode,
-    autoRotate,
-    setAutoRotate,
-    currentPreset,
-    setCurrentPreset,
-    lorenzParams,
-    setLorenzParams,
-    rosslerParams,
-    setRosslerParams,
-    doublePendulumParams,
-    setDoublePendulumParams,
+    currentSystem, setCurrentSystem,
+    isPlaying, setIsPlaying,
+    speed, setSpeed,
+    trailLength, setTrailLength,
+    sideBySideMode, setSideBySideMode,
+    initialOffset, setInitialOffset,
+    autoRotate, setAutoRotate,
+    currentPreset, setCurrentPreset,
+    colorTheme, setColorTheme,
+    lorenzParams, setLorenzParams,
+    rosslerParams, setRosslerParams,
+    doublePendulumParams, setDoublePendulumParams,
     resetSimulation,
   } = useStore();
+
+  const theme = THEMES[colorTheme];
 
   const handlePresetChange = (presetName: string) => {
     const preset = PRESETS[currentSystem].find(p => p.name === presetName);
     if (!preset) return;
-
     switch (currentSystem) {
-      case 'lorenz':
-        setLorenzParams(preset.params);
-        break;
-      case 'rossler':
-        setRosslerParams(preset.params);
-        break;
-      case 'doublePendulum':
-        setDoublePendulumParams(preset.params);
-        break;
+      case 'lorenz': setLorenzParams(preset.params); break;
+      case 'rossler': setRosslerParams(preset.params); break;
+      case 'doublePendulum': setDoublePendulumParams(preset.params); break;
     }
     setCurrentPreset(presetName);
+  };
+
+  const handleSystemChange = (sys: ChaosSystem) => {
+    setCurrentSystem(sys);
+    setCurrentPreset(null);
   };
 
   const renderSystemControls = () => {
@@ -54,273 +62,235 @@ export const Controls: React.FC = () => {
             <h4>Lorenz Parameters</h4>
             <div className="slider-group">
               <label>σ (sigma): {lorenzParams.sigma.toFixed(2)}</label>
-              <input
-                type="range"
-                min="0.1"
-                max="30"
-                step="0.1"
-                value={lorenzParams.sigma}
-                onChange={(e) => setLorenzParams({ sigma: parseFloat(e.target.value) })}
-              />
+              <input type="range" min="0.1" max="30" step="0.1" value={lorenzParams.sigma}
+                onChange={(e) => setLorenzParams({ sigma: parseFloat(e.target.value) })} />
             </div>
             <div className="slider-group">
               <label>ρ (rho): {lorenzParams.rho.toFixed(2)}</label>
-              <input
-                type="range"
-                min="0.1"
-                max="50"
-                step="0.1"
-                value={lorenzParams.rho}
-                onChange={(e) => setLorenzParams({ rho: parseFloat(e.target.value) })}
-              />
+              <input type="range" min="0.1" max="50" step="0.1" value={lorenzParams.rho}
+                onChange={(e) => setLorenzParams({ rho: parseFloat(e.target.value) })} />
             </div>
             <div className="slider-group">
               <label>β (beta): {lorenzParams.beta.toFixed(3)}</label>
-              <input
-                type="range"
-                min="0.1"
-                max="10"
-                step="0.01"
-                value={lorenzParams.beta}
-                onChange={(e) => setLorenzParams({ beta: parseFloat(e.target.value) })}
-              />
+              <input type="range" min="0.1" max="10" step="0.01" value={lorenzParams.beta}
+                onChange={(e) => setLorenzParams({ beta: parseFloat(e.target.value) })} />
             </div>
           </div>
         );
-
       case 'rossler':
         return (
           <div className="parameter-group">
             <h4>Rössler Parameters</h4>
             <div className="slider-group">
               <label>a: {rosslerParams.a.toFixed(3)}</label>
-              <input
-                type="range"
-                min="0.01"
-                max="1.0"
-                step="0.01"
-                value={rosslerParams.a}
-                onChange={(e) => setRosslerParams({ a: parseFloat(e.target.value) })}
-              />
+              <input type="range" min="0.01" max="1.0" step="0.01" value={rosslerParams.a}
+                onChange={(e) => setRosslerParams({ a: parseFloat(e.target.value) })} />
             </div>
             <div className="slider-group">
               <label>b: {rosslerParams.b.toFixed(3)}</label>
-              <input
-                type="range"
-                min="0.01"
-                max="1.0"
-                step="0.01"
-                value={rosslerParams.b}
-                onChange={(e) => setRosslerParams({ b: parseFloat(e.target.value) })}
-              />
+              <input type="range" min="0.01" max="1.0" step="0.01" value={rosslerParams.b}
+                onChange={(e) => setRosslerParams({ b: parseFloat(e.target.value) })} />
             </div>
             <div className="slider-group">
               <label>c: {rosslerParams.c.toFixed(2)}</label>
-              <input
-                type="range"
-                min="1.0"
-                max="20.0"
-                step="0.1"
-                value={rosslerParams.c}
-                onChange={(e) => setRosslerParams({ c: parseFloat(e.target.value) })}
-              />
+              <input type="range" min="1.0" max="20.0" step="0.1" value={rosslerParams.c}
+                onChange={(e) => setRosslerParams({ c: parseFloat(e.target.value) })} />
             </div>
           </div>
         );
-
       case 'doublePendulum':
         return (
           <div className="parameter-group">
-            <h4>Double Pendulum Parameters</h4>
+            <h4>Pendulum Parameters</h4>
             <div className="slider-group">
               <label>Mass 1: {doublePendulumParams.mass1.toFixed(2)}</label>
-              <input
-                type="range"
-                min="0.1"
-                max="5.0"
-                step="0.1"
-                value={doublePendulumParams.mass1}
-                onChange={(e) => setDoublePendulumParams({ mass1: parseFloat(e.target.value) })}
-              />
+              <input type="range" min="0.1" max="5.0" step="0.1" value={doublePendulumParams.mass1}
+                onChange={(e) => setDoublePendulumParams({ mass1: parseFloat(e.target.value) })} />
             </div>
             <div className="slider-group">
               <label>Mass 2: {doublePendulumParams.mass2.toFixed(2)}</label>
-              <input
-                type="range"
-                min="0.1"
-                max="5.0"
-                step="0.1"
-                value={doublePendulumParams.mass2}
-                onChange={(e) => setDoublePendulumParams({ mass2: parseFloat(e.target.value) })}
-              />
+              <input type="range" min="0.1" max="5.0" step="0.1" value={doublePendulumParams.mass2}
+                onChange={(e) => setDoublePendulumParams({ mass2: parseFloat(e.target.value) })} />
             </div>
             <div className="slider-group">
               <label>Length 1: {doublePendulumParams.length1.toFixed(2)}</label>
-              <input
-                type="range"
-                min="0.2"
-                max="2.0"
-                step="0.1"
-                value={doublePendulumParams.length1}
-                onChange={(e) => setDoublePendulumParams({ length1: parseFloat(e.target.value) })}
-              />
+              <input type="range" min="0.2" max="2.0" step="0.1" value={doublePendulumParams.length1}
+                onChange={(e) => setDoublePendulumParams({ length1: parseFloat(e.target.value) })} />
             </div>
             <div className="slider-group">
               <label>Length 2: {doublePendulumParams.length2.toFixed(2)}</label>
-              <input
-                type="range"
-                min="0.2"
-                max="2.0"
-                step="0.1"
-                value={doublePendulumParams.length2}
-                onChange={(e) => setDoublePendulumParams({ length2: parseFloat(e.target.value) })}
-              />
+              <input type="range" min="0.2" max="2.0" step="0.1" value={doublePendulumParams.length2}
+                onChange={(e) => setDoublePendulumParams({ length2: parseFloat(e.target.value) })} />
             </div>
             <div className="slider-group">
               <label>Gravity: {doublePendulumParams.gravity.toFixed(2)}</label>
-              <input
-                type="range"
-                min="1.0"
-                max="20.0"
-                step="0.1"
-                value={doublePendulumParams.gravity}
-                onChange={(e) => setDoublePendulumParams({ gravity: parseFloat(e.target.value) })}
-              />
+              <input type="range" min="1.0" max="20.0" step="0.1" value={doublePendulumParams.gravity}
+                onChange={(e) => setDoublePendulumParams({ gravity: parseFloat(e.target.value) })} />
             </div>
             <div className="slider-group">
               <label>Damping: {doublePendulumParams.damping.toFixed(3)}</label>
-              <input
-                type="range"
-                min="0.0"
-                max="0.2"
-                step="0.005"
-                value={doublePendulumParams.damping}
-                onChange={(e) => setDoublePendulumParams({ damping: parseFloat(e.target.value) })}
-              />
+              <input type="range" min="0.0" max="0.2" step="0.005" value={doublePendulumParams.damping}
+                onChange={(e) => setDoublePendulumParams({ damping: parseFloat(e.target.value) })} />
             </div>
           </div>
         );
-
-      default:
-        return null;
+      default: return null;
     }
   };
 
+  // Format offset for display
+  const formatOffset = (v: number) => {
+    if (v >= 0.01) return v.toFixed(3);
+    return v.toExponential(1);
+  };
+
   return (
-    <div className={`controls ${isCollapsed ? 'collapsed' : ''}`}>
-      <button 
+    <div
+      className={`controls ${isCollapsed ? 'collapsed' : ''} ${isMobile ? 'mobile' : ''}`}
+      style={{
+        '--panel-bg': theme.panelBg,
+        '--panel-border': theme.panelBorder,
+        '--text-color': theme.text,
+        '--text-muted': theme.textMuted,
+        '--accent': theme.accent,
+        '--accent2': theme.accent2,
+        '--heading': theme.heading,
+        '--param-color': theme.paramColor,
+      } as React.CSSProperties}
+    >
+      <button
         className="controls-toggle"
         onClick={() => setIsCollapsed(!isCollapsed)}
-        title={isCollapsed ? "Show Controls" : "Hide Controls"}
+        title={isCollapsed ? 'Show Controls' : 'Hide Controls'}
       >
         {isCollapsed ? '⚙️' : '✕'}
       </button>
-      
+
       {!isCollapsed && (
         <>
+          {/* System Selector */}
           <div className="control-section">
-        <h3>Chaos System</h3>
-        <select 
-          value={currentSystem} 
-          onChange={(e) => setCurrentSystem(e.target.value as ChaosSystem)}
-          className="system-select"
-        >
-          <option value="lorenz">Lorenz Attractor</option>
-          <option value="rossler">Rössler Attractor</option>
-          <option value="doublePendulum">Double Pendulum</option>
-        </select>
-      </div>
-
-      <div className="control-section">
-        <h3>Simulation</h3>
-        <div className="button-group">
-          <button 
-            onClick={() => setIsPlaying(!isPlaying)}
-            className={`play-button ${isPlaying ? 'playing' : 'paused'}`}
-          >
-            {isPlaying ? '⏸️' : '▶️'}
-          </button>
-          <button onClick={resetSimulation} className="reset-button">
-            🔄 Reset
-          </button>
-        </div>
-        
-        <div className="slider-group">
-          <label>Speed: {speed.toFixed(1)}x</label>
-          <input
-            type="range"
-            min="0.1"
-            max="5.0"
-            step="0.1"
-            value={speed}
-            onChange={(e) => setSpeed(parseFloat(e.target.value))}
-          />
-        </div>
-        
-        <div className="slider-group">
-          <label>
-            Trail Length: {trailLength}
-            {trailLength > 3000 && (
-              <span style={{ color: '#ff9999', fontSize: '12px' }}>
-                {' '}(High - may impact performance)
-              </span>
-            )}
-          </label>
-          <input
-            type="range"
-            min="100"
-            max="5000"
-            step="100"
-            value={trailLength}
-            onChange={(e) => setTrailLength(parseInt(e.target.value))}
-          />
-        </div>
-      </div>
-
-      <div className="control-section">
-        <h3>View Options</h3>
-        <div className="checkbox-group">
-          <label>
-            <input
-              type="checkbox"
-              checked={sideBySideMode}
-              onChange={(e) => setSideBySideMode(e.target.checked)}
-            />
-            Side-by-Side Mode
-          </label>
-        </div>
-        
-        {currentSystem !== 'doublePendulum' && (
-          <div className="checkbox-group">
-            <label>
-              <input
-                type="checkbox"
-                checked={autoRotate}
-                onChange={(e) => setAutoRotate(e.target.checked)}
-              />
-              Auto Rotate Camera
-            </label>
+            <h3>Chaos System</h3>
+            <div className="system-tabs">
+              {(['lorenz', 'rossler', 'doublePendulum'] as ChaosSystem[]).map((sys) => (
+                <button
+                  key={sys}
+                  className={`system-tab ${currentSystem === sys ? 'active' : ''}`}
+                  onClick={() => handleSystemChange(sys)}
+                >
+                  {sys === 'lorenz' ? '🦋 Lorenz' : sys === 'rossler' ? '🌀 Rössler' : '⚡ Pendulum'}
+                </button>
+              ))}
+            </div>
           </div>
-        )}
-      </div>
 
-      <div className="control-section">
-        <h3>Presets</h3>
-        <select
-          value={currentPreset || ''}
-          onChange={(e) => handlePresetChange(e.target.value)}
-          className="preset-select"
-        >
-          <option value="">Select Preset</option>
-          {PRESETS[currentSystem].map((preset) => (
-            <option key={preset.name} value={preset.name}>
-              {preset.name}
-            </option>
-          ))}
-        </select>
-      </div>
+          {/* Simulation */}
+          <div className="control-section">
+            <h3>Simulation</h3>
+            <div className="button-group">
+              <button onClick={() => setIsPlaying(!isPlaying)}
+                className={`play-button ${isPlaying ? 'playing' : 'paused'}`}>
+                {isPlaying ? '⏸ Pause' : '▶ Play'}
+              </button>
+              <button onClick={resetSimulation} className="reset-button">🔄 Reset</button>
+            </div>
+            <div className="slider-group">
+              <label>Speed: {speed.toFixed(1)}x</label>
+              <input type="range" min="0.1" max="5.0" step="0.1" value={speed}
+                onChange={(e) => setSpeed(parseFloat(e.target.value))} />
+            </div>
+            <div className="slider-group">
+              <label>Trail: {trailLength}
+                {trailLength > 3000 && <span className="warn"> ⚠️ High</span>}
+              </label>
+              <input type="range" min="100" max="5000" step="100" value={trailLength}
+                onChange={(e) => setTrailLength(parseInt(e.target.value))} />
+            </div>
+          </div>
 
-      {renderSystemControls()}
+          {/* Butterfly Effect */}
+          <div className="control-section butterfly-section">
+            <h3>🦋 Butterfly Effect</h3>
+            <div className="checkbox-group">
+              <label>
+                <input type="checkbox" checked={sideBySideMode}
+                  onChange={(e) => {
+                    setSideBySideMode(e.target.checked);
+                    if (e.target.checked) resetSimulation();
+                  }} />
+                Enable Butterfly Mode
+              </label>
+            </div>
+            {sideBySideMode && (
+              <div className="slider-group offset-slider">
+                <label>
+                  Initial Offset: <span className="offset-value">{formatOffset(initialOffset)}</span>
+                </label>
+                <input type="range" min="-6" max="-0.5" step="0.1"
+                  value={Math.log10(initialOffset)}
+                  onChange={(e) => {
+                    setInitialOffset(Math.pow(10, parseFloat(e.target.value)));
+                    resetSimulation();
+                  }} />
+                <div className="offset-labels">
+                  <span>Tiny</span>
+                  <span>Large</span>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* View Options */}
+          <div className="control-section">
+            <h3>View</h3>
+            {currentSystem !== 'doublePendulum' && (
+              <div className="checkbox-group">
+                <label>
+                  <input type="checkbox" checked={autoRotate}
+                    onChange={(e) => setAutoRotate(e.target.checked)} />
+                  Auto Rotate
+                </label>
+              </div>
+            )}
+          </div>
+
+          {/* Theme */}
+          <div className="control-section">
+            <h3>Theme</h3>
+            <div className="theme-grid">
+              {(Object.keys(THEMES) as ColorTheme[]).map((t) => (
+                <button key={t}
+                  className={`theme-btn ${colorTheme === t ? 'active' : ''}`}
+                  onClick={() => setColorTheme(t)}
+                  style={{
+                    '--tbg': THEMES[t].bg,
+                    '--taccent': THEMES[t].accent,
+                  } as React.CSSProperties}
+                >
+                  {THEME_LABELS[t]}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Presets */}
+          <div className="control-section">
+            <h3>Presets</h3>
+            <div className="preset-chips">
+              {PRESETS[currentSystem].map((preset) => (
+                <button key={preset.name}
+                  className={`preset-chip ${currentPreset === preset.name ? 'active' : ''}`}
+                  onClick={() => handlePresetChange(preset.name)}
+                  title={preset.description}
+                >
+                  {preset.name}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* System params */}
+          {renderSystemControls()}
         </>
       )}
     </div>

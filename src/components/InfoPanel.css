@@ -2,138 +2,125 @@
   position: absolute;
   top: 20px;
   left: 20px;
-  width: 400px;
+  width: 360px;
   max-height: calc(100vh - 40px);
-  background: rgba(15, 15, 20, 0.95);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
+  background: rgba(10, 10, 18, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
   color: white;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(10px);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(20px);
   overflow: hidden;
   z-index: 1000;
+  animation: slideInLeft 0.3s ease-out;
 }
 
 .info-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 24px 16px 24px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.02);
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
-
 .info-header h2 {
   margin: 0;
   color: #88ccff;
-  font-size: 20px;
-  font-weight: 600;
+  font-size: 17px;
+  font-weight: 700;
 }
-
 .info-close {
   background: none;
   border: none;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.5);
   font-size: 18px;
   cursor: pointer;
-  padding: 4px;
-  border-radius: 4px;
+  padding: 6px;
+  border-radius: 8px;
   transition: all 0.2s ease;
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-
 .info-close:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.08);
   color: white;
 }
 
 .info-content {
-  padding: 20px 24px;
+  padding: 18px 20px;
   overflow-y: auto;
   max-height: calc(100vh - 120px);
 }
-
-.info-content section {
-  margin-bottom: 24px;
-}
-
-.info-content section:last-child {
-  margin-bottom: 0;
-}
-
+.info-content section { margin-bottom: 20px; }
+.info-content section:last-child { margin-bottom: 0; }
 .info-content h3 {
-  margin: 0 0 12px 0;
+  margin: 0 0 8px;
   color: #aaffaa;
-  font-size: 16px;
+  font-size: 13px;
   font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
-
 .info-content p {
-  margin: 0 0 12px 0;
+  margin: 0 0 10px;
   line-height: 1.6;
-  color: #cccccc;
-  font-size: 14px;
+  color: #bbb;
+  font-size: 13px;
 }
 
 .equations {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
-  padding: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 10px;
+  padding: 14px;
   margin: 8px 0;
 }
-
 .equation {
   font-family: 'Courier New', Consolas, monospace;
-  font-size: 14px;
+  font-size: 13px;
   color: #ffcc88;
-  margin: 8px 0;
-  padding: 4px 0;
+  margin: 6px 0;
   text-align: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 6px;
 }
-
-.equation:last-child {
-  border-bottom: none;
-}
+.equation:last-child { border-bottom: none; padding-bottom: 0; }
 
 .parameters {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
-  padding: 16px;
-  margin: 8px 0;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 10px;
+  padding: 14px;
 }
-
 .parameter {
-  margin: 10px 0;
-  font-size: 14px;
+  margin: 8px 0;
+  font-size: 13px;
   line-height: 1.5;
 }
-
 .parameter strong {
   color: #ffcc88;
-  font-weight: 600;
 }
 
 .info-content ul {
   margin: 8px 0;
-  padding-left: 20px;
-  color: #cccccc;
+  padding-left: 18px;
+  color: #bbb;
 }
-
 .info-content li {
-  margin: 6px 0;
+  margin: 5px 0;
   line-height: 1.5;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .info-toggle {
   position: absolute;
   top: 20px;
   left: 20px;
-  width: 50px;
-  height: 50px;
-  background: rgba(20, 20, 25, 0.95);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  width: 48px;
+  height: 48px;
+  background: rgba(10, 10, 18, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 50%;
   color: white;
   font-size: 20px;
@@ -142,86 +129,45 @@
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(20px);
   z-index: 1000;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
 }
-
 .info-toggle:hover {
-  background: rgba(40, 40, 50, 0.95);
-  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(30, 30, 45, 0.95);
   transform: scale(1.05);
 }
 
-/* Custom scrollbar for info content */
-.info-content::-webkit-scrollbar {
-  width: 6px;
-}
+/* Scrollbar */
+.info-content::-webkit-scrollbar { width: 4px; }
+.info-content::-webkit-scrollbar-track { background: transparent; }
+.info-content::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.12); border-radius: 2px; }
 
-.info-content::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 3px;
-}
-
-.info-content::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 3px;
-}
-
-.info-content::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
-}
-
-/* Responsive design */
+/* Responsive */
 @media (max-width: 768px) {
   .info-panel {
-    width: 350px;
-    left: 10px;
-    top: 10px;
-    max-height: calc(100vh - 20px);
-  }
-  
-  .info-header {
-    padding: 16px 20px 12px 20px;
-  }
-  
-  .info-content {
-    padding: 16px 20px;
-  }
-  
-  .info-toggle {
+    width: 320px;
     left: 10px;
     top: 10px;
   }
+  .info-toggle { left: 10px; top: 10px; }
 }
 
 @media (max-width: 480px) {
   .info-panel {
     width: calc(100vw - 20px);
     left: 10px;
-    right: 10px;
     bottom: 10px;
     top: auto;
-    max-height: 60vh;
+    max-height: 50vh;
   }
-  
   .info-toggle {
     bottom: 80px;
     top: auto;
   }
 }
 
-/* Animation for panel appearance */
 @keyframes slideInLeft {
-  from {
-    transform: translateX(-100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-.info-panel {
-  animation: slideInLeft 0.3s ease-out;
+  from { transform: translateX(-100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
 }

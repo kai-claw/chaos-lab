@@ -5,9 +5,9 @@
 }
 
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
   overflow: hidden;
-  background: #000010;
+  background: var(--bg, #000010);
 }
 
 .app {
@@ -17,9 +17,10 @@ body {
   overflow: hidden;
 }
 
+/* ─── Title ─── */
 .title-overlay {
   position: absolute;
-  top: 20px;
+  top: 18px;
   left: 50%;
   transform: translateX(-50%);
   text-align: center;
@@ -29,122 +30,79 @@ body {
 }
 
 .title-overlay h1 {
-  font-size: 2.5rem;
-  font-weight: 700;
+  font-size: 2.2rem;
+  font-weight: 800;
   margin: 0;
-  background: linear-gradient(135deg, #88ccff, #aaffaa, #ffcc88);
+  background: linear-gradient(135deg, #88ccff 0%, #aaffaa 50%, #ffcc88 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  text-shadow: 0 0 20px rgba(136, 204, 255, 0.3);
+  letter-spacing: -0.5px;
+  filter: drop-shadow(0 0 20px rgba(136, 204, 255, 0.3));
 }
 
 .title-overlay p {
-  font-size: 1.1rem;
-  margin: 8px 0 0 0;
-  color: rgba(255, 255, 255, 0.8);
-  font-weight: 300;
-  letter-spacing: 0.5px;
+  font-size: 0.85rem;
+  margin: 4px 0 0 0;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 400;
+  letter-spacing: 2px;
+  text-transform: uppercase;
 }
 
+/* ─── Instructions ─── */
 .instructions {
   position: absolute;
-  bottom: 20px;
+  bottom: 16px;
   left: 50%;
   transform: translateX(-50%);
   text-align: center;
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 0.78rem;
   z-index: 100;
   pointer-events: none;
   background: rgba(0, 0, 16, 0.5);
-  padding: 12px 24px;
+  padding: 8px 20px;
   border-radius: 20px;
-  backdrop-filter: blur(5px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .instructions strong {
-  color: #88ccff;
+  color: var(--accent, #88ccff);
 }
 
-/* Loading animation for when components are loading */
-.loading {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: white;
-  font-size: 1.2rem;
-}
-
-/* Responsive design */
+/* ─── Responsive ─── */
 @media (max-width: 768px) {
   .title-overlay {
     top: 10px;
   }
-  
   .title-overlay h1 {
-    font-size: 2rem;
+    font-size: 1.6rem;
   }
-  
   .title-overlay p {
-    font-size: 1rem;
+    font-size: 0.7rem;
   }
-  
   .instructions {
-    bottom: 10px;
-    font-size: 0.8rem;
-    padding: 10px 20px;
-    max-width: 90%;
+    display: none; /* hidden on mobile — gestures are intuitive */
   }
 }
 
 @media (max-width: 480px) {
-  .title-overlay {
-    top: 10px;
-    padding: 0 10px;
-  }
-  
   .title-overlay h1 {
-    font-size: 1.8rem;
-  }
-  
-  .title-overlay p {
-    font-size: 0.9rem;
-  }
-  
-  .instructions {
-    bottom: 80px; /* Above mobile controls */
-    font-size: 0.75rem;
-    padding: 8px 16px;
-    left: 10px;
-    right: 10px;
-    transform: none;
-    max-width: none;
+    font-size: 1.4rem;
   }
 }
 
-/* Smooth transitions */
-* {
-  transition: opacity 0.2s ease, transform 0.2s ease;
-}
-
-/* Hide elements that might interfere with the visualization */
+/* ─── Global ─── */
 canvas {
   outline: none;
 }
 
-/* Custom selection styling */
 ::selection {
   background: rgba(136, 204, 255, 0.3);
 }
 
-::-moz-selection {
-  background: rgba(136, 204, 255, 0.3);
-}
-
-/* Ensure the app takes full viewport */
 html, body, #root {
   width: 100%;
   height: 100%;
