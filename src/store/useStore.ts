@@ -88,31 +88,87 @@ export interface SystemPreset {
   params: Record<string, number>;
 }
 
+export interface StoryPreset {
+  name: string;
+  emoji: string;
+  description: string;
+  system: ChaosSystem;
+  params: Record<string, number>;
+  trailLength: number;
+  speed: number;
+  sideBySide: boolean;
+  offset: number;
+}
+
+export const STORY_PRESETS: StoryPreset[] = [
+  {
+    name: 'The Butterfly Effect',
+    emoji: '🦋',
+    description: 'Two nearly identical universes diverge into completely different futures',
+    system: 'lorenz',
+    params: { sigma: 10, rho: 28, beta: 8 / 3 },
+    trailLength: 2000,
+    speed: 1.0,
+    sideBySide: true,
+    offset: 0.000001,
+  },
+  {
+    name: 'Edge of Order',
+    emoji: '⚖️',
+    description: 'Right at the boundary where predictable behavior gives way to chaos',
+    system: 'lorenz',
+    params: { sigma: 10, rho: 24.5, beta: 8 / 3 },
+    trailLength: 3000,
+    speed: 0.8,
+    sideBySide: false,
+    offset: 0.001,
+  },
+  {
+    name: 'Period Doubling',
+    emoji: '🔄',
+    description: 'Watch the Rössler system trace a period-2 orbit — increase c to see the cascade to chaos',
+    system: 'rossler',
+    params: { a: 0.2, b: 0.2, c: 3.5 },
+    trailLength: 3000,
+    speed: 1.0,
+    sideBySide: false,
+    offset: 0.001,
+  },
+  {
+    name: 'The Strange Attractor',
+    emoji: '🌀',
+    description: 'The iconic Lorenz butterfly with a long, luminous trail',
+    system: 'lorenz',
+    params: { sigma: 10, rho: 28, beta: 8 / 3 },
+    trailLength: 4000,
+    speed: 1.5,
+    sideBySide: false,
+    offset: 0.001,
+  },
+];
+
 export interface AppState {
   currentSystem: ChaosSystem;
   setCurrentSystem: (system: ChaosSystem) => void;
 
   isPlaying: boolean;
   setIsPlaying: (playing: boolean) => void;
-  
+
   speed: number;
   setSpeed: (speed: number) => void;
-  
+
   trailLength: number;
   setTrailLength: (length: number) => void;
 
   sideBySideMode: boolean;
   setSideBySideMode: (enabled: boolean) => void;
 
-  // Butterfly effect initial offset (log10 scale)
   initialOffset: number;
   setInitialOffset: (offset: number) => void;
 
-  // Divergence tracking
   divergence: number;
   setDivergence: (d: number) => void;
 
-  // Color theme
   colorTheme: ColorTheme;
   setColorTheme: (theme: ColorTheme) => void;
 
@@ -133,15 +189,30 @@ export interface AppState {
 
   showInfoPanel: boolean;
   setShowInfoPanel: (show: boolean) => void;
-  
+
   autoRotate: boolean;
   setAutoRotate: (rotate: boolean) => void;
 
   resetSimulation: () => void;
   _resetCounter: number;
-  
+
   showPerformanceWarning: boolean;
   setShowPerformanceWarning: (show: boolean) => void;
+
+  // Analysis tools
+  showLyapunov: boolean;
+  setShowLyapunov: (show: boolean) => void;
+  lyapunovExponent: number;
+  setLyapunovExponent: (le: number) => void;
+
+  showBifurcation: boolean;
+  setShowBifurcation: (show: boolean) => void;
+
+  showPoincare: boolean;
+  setShowPoincare: (show: boolean) => void;
+
+  showParameterSpace: boolean;
+  setShowParameterSpace: (show: boolean) => void;
 }
 
 export const useStore = create<AppState>((set) => ({
@@ -150,10 +221,10 @@ export const useStore = create<AppState>((set) => ({
 
   isPlaying: true,
   setIsPlaying: (playing) => set({ isPlaying: playing }),
-  
+
   speed: 1.0,
   setSpeed: (speed) => set({ speed }),
-  
+
   trailLength: 1000,
   setTrailLength: (length) => set({ trailLength: length }),
 
@@ -191,7 +262,7 @@ export const useStore = create<AppState>((set) => ({
 
   showInfoPanel: true,
   setShowInfoPanel: (show) => set({ showInfoPanel: show }),
-  
+
   autoRotate: false,
   setAutoRotate: (rotate) => set({ autoRotate: rotate }),
 
@@ -200,9 +271,24 @@ export const useStore = create<AppState>((set) => ({
     set((s) => ({ _resetCounter: s._resetCounter + 1, isPlaying: false }));
     setTimeout(() => set({ isPlaying: true }), 100);
   },
-  
+
   showPerformanceWarning: false,
   setShowPerformanceWarning: (show) => set({ showPerformanceWarning: show }),
+
+  // Analysis tools
+  showLyapunov: false,
+  setShowLyapunov: (show) => set({ showLyapunov: show }),
+  lyapunovExponent: 0,
+  setLyapunovExponent: (le) => set({ lyapunovExponent: le }),
+
+  showBifurcation: false,
+  setShowBifurcation: (show) => set({ showBifurcation: show }),
+
+  showPoincare: false,
+  setShowPoincare: (show) => set({ showPoincare: show }),
+
+  showParameterSpace: false,
+  setShowParameterSpace: (show) => set({ showParameterSpace: show }),
 }));
 
 export const PRESETS: Record<ChaosSystem, SystemPreset[]> = {

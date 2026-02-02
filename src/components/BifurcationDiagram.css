@@ -1,0 +1,101 @@
+.bifurcation-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--panel-bg, rgba(10, 10, 20, 0.95));
+  border: 1px solid var(--panel-border, rgba(255,255,255,0.12));
+  border-radius: 16px;
+  z-index: 1200;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 12px 48px rgba(0,0,0,0.7);
+  animation: bifurcationIn 0.3s ease-out;
+  overflow: hidden;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.bifurcation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--panel-border, rgba(255,255,255,0.08));
+}
+
+.bifurcation-header h3 {
+  margin: 0;
+  font-size: 14px;
+  color: var(--accent, #88ccff);
+  font-weight: 700;
+}
+
+.bifurcation-close {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.5);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+  min-width: 32px;
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.bifurcation-close:hover {
+  background: rgba(255,255,255,0.1);
+  color: white;
+}
+
+.bifurcation-canvas-wrap {
+  position: relative;
+  padding: 0 12px;
+}
+
+.bifurcation-canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.bifurcation-canvas-overlay {
+  position: absolute;
+  top: 0;
+  left: 12px;
+  right: 12px;
+  bottom: 0;
+  width: calc(100% - 24px);
+  height: 100%;
+  cursor: crosshair;
+  border-radius: 8px;
+}
+
+.bifurcation-hint {
+  padding: 10px 18px 14px;
+  margin: 0;
+  font-size: 11px;
+  color: rgba(255,255,255,0.4);
+  line-height: 1.4;
+}
+
+@keyframes bifurcationIn {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(0.95); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+@media (max-width: 768px) {
+  .bifurcation-overlay {
+    width: calc(100vw - 20px);
+    top: auto;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  @keyframes bifurcationIn {
+    from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+    to { opacity: 1; transform: translateX(-50%) translateY(0); }
+  }
+}
