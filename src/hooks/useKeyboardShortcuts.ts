@@ -89,11 +89,23 @@ export function useKeyboardShortcuts(
           }
           break;
 
+        case 'c':
+        case 'C':
+          store.setCinematicCamera(!store.cinematicCamera);
+          break;
+
+        case 'a':
+        case 'A':
+          store.setChaosAutopilot(!store.chaosAutopilot);
+          break;
+
         case 'Escape':
           // Close any open overlay
-          if (store.showBifurcation) store.setShowBifurcation(false);
+          if (store.storyMode) { store.setStoryMode(false); store.setCinematicCamera(false); }
+          else if (store.showBifurcation) store.setShowBifurcation(false);
           else if (store.showPoincare) store.setShowPoincare(false);
           else if (store.showParameterSpace) store.setShowParameterSpace(false);
+          else if (store.cinematicCamera) store.setCinematicCamera(false);
           break;
       }
     };

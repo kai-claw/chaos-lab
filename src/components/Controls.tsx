@@ -44,6 +44,9 @@ export const Controls: React.FC = () => {
     showBifurcation, setShowBifurcation,
     showPoincare, setShowPoincare,
     showParameterSpace, setShowParameterSpace,
+    cinematicCamera, setCinematicCamera,
+    chaosAutopilot, setChaosAutopilot,
+    setStoryMode,
   } = useStore();
 
   const theme = THEMES[colorTheme];
@@ -297,6 +300,49 @@ export const Controls: React.FC = () => {
                   />
                   Auto Rotate
                 </label>
+              </div>
+            )}
+          </div>
+
+          {/* Creative Features */}
+          <div className="control-section">
+            <h3>✨ Experience</h3>
+            <div className="experience-buttons">
+              <button
+                className={`experience-btn cinematic ${cinematicCamera ? 'active' : ''}`}
+                onClick={() => setCinematicCamera(!cinematicCamera)}
+                aria-pressed={cinematicCamera}
+                aria-label="Toggle cinematic chase camera that follows the trail"
+              >
+                🎬 Chase Cam
+              </button>
+              <button
+                className={`experience-btn autopilot ${chaosAutopilot ? 'active' : ''}`}
+                onClick={() => setChaosAutopilot(!chaosAutopilot)}
+                aria-pressed={chaosAutopilot}
+                aria-label="Toggle chaos autopilot that morphs parameters automatically"
+              >
+                🤖 Autopilot
+              </button>
+              <button
+                className="experience-btn story"
+                onClick={() => {
+                  setStoryMode(true);
+                  setAutoRotate(true);
+                }}
+                aria-label="Launch guided story mode tour"
+              >
+                📖 Story Mode
+              </button>
+            </div>
+            {chaosAutopilot && (
+              <div className="autopilot-hint">
+                Parameters are morphing through interesting regions...
+              </div>
+            )}
+            {cinematicCamera && (
+              <div className="autopilot-hint">
+                Camera is following the trail head. Orbit controls disabled.
               </div>
             )}
           </div>

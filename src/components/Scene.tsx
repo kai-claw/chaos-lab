@@ -6,6 +6,9 @@ import { LorenzAttractor } from './LorenzAttractor';
 import { RosslerAttractor } from './RosslerAttractor';
 import { DoublePendulum } from './DoublePendulum';
 import { Starfield } from './Starfield';
+import { CinematicCamera } from './CinematicCamera';
+import { ChaosAutopilot } from './ChaosAutopilot';
+import { TrailSparkles } from './TrailSparkles';
 import { useStore, THEMES, type ChaosSystem } from '../store/useStore';
 import type { PendulumState } from '../systems/doublePendulum';
 
@@ -22,7 +25,11 @@ const CAMERA_SETTINGS: Record<ChaosSystem, { position: Vec3Tuple; fov: number }>
 
 /* ─── camera controls ─── */
 const CameraControls: React.FC = () => {
-  const { autoRotate, currentSystem } = useStore();
+  const { autoRotate, currentSystem, cinematicCamera } = useStore();
+
+  // Disable orbit controls when cinematic camera is active
+  if (cinematicCamera) return null;
+
   return (
     <OrbitControls
       enablePan enableZoom enableRotate
@@ -166,6 +173,9 @@ const SceneContent: React.FC = () => {
       )}
 
       <CameraControls />
+      <CinematicCamera />
+      <ChaosAutopilot />
+      <TrailSparkles />
     </>
   );
 };

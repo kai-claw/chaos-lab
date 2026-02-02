@@ -13,6 +13,8 @@ const SHORTCUTS = [
   { key: '2', action: 'Switch to Rössler attractor' },
   { key: '3', action: 'Switch to Double Pendulum' },
   { key: 'S', action: 'Toggle side-by-side (Butterfly) mode' },
+  { key: 'C', action: 'Toggle cinematic chase camera' },
+  { key: 'A', action: 'Toggle chaos autopilot' },
   { key: 'T', action: 'Cycle through color themes' },
   { key: 'P', action: 'Screenshot current view' },
   { key: 'L', action: 'Copy share link to clipboard' },

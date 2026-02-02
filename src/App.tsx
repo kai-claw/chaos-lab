@@ -6,6 +6,7 @@ import { QuickStart } from './components/QuickStart';
 import { DivergenceMeter } from './components/DivergenceMeter';
 import { LyapunovIndicator } from './components/LyapunovIndicator';
 import { HelpOverlay } from './components/HelpOverlay';
+import { StoryMode } from './components/StoryMode';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { useUrlState } from './hooks/useUrlState';
 import { useStore, THEMES } from './store/useStore';
@@ -79,6 +80,7 @@ function App() {
         <ParameterSpace />
       </Suspense>
       <HelpOverlay isVisible={showHelp} onClose={toggleHelp} />
+      <StoryMode />
       <QuickStart />
 
       {/* Title overlay */}

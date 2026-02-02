@@ -495,3 +495,94 @@
   outline: 2px solid var(--accent, #88ccff);
   outline-offset: 2px;
 }
+
+/* ─── Experience Buttons ─── */
+.experience-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.experience-btn {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--panel-border, rgba(255, 255, 255, 0.1));
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-color, #ccc);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-align: left;
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.experience-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--accent, #88ccff);
+  transform: translateY(-1px);
+}
+
+.experience-btn.active {
+  border-color: var(--accent, #88ccff);
+  box-shadow: 0 0 15px rgba(136, 204, 255, 0.15), inset 0 0 20px rgba(136, 204, 255, 0.05);
+}
+
+.experience-btn.cinematic.active {
+  background: rgba(255, 200, 50, 0.12);
+  border-color: #ffcc44;
+  color: #ffdd66;
+  box-shadow: 0 0 15px rgba(255, 200, 50, 0.15);
+}
+
+.experience-btn.autopilot.active {
+  background: rgba(100, 255, 100, 0.1);
+  border-color: #66ff66;
+  color: #88ff88;
+  box-shadow: 0 0 15px rgba(100, 255, 100, 0.12);
+  animation: autopilotPulse 2s ease-in-out infinite;
+}
+
+@keyframes autopilotPulse {
+  0%, 100% { box-shadow: 0 0 15px rgba(100, 255, 100, 0.12); }
+  50% { box-shadow: 0 0 25px rgba(100, 255, 100, 0.25); }
+}
+
+.experience-btn.story {
+  background: linear-gradient(135deg, rgba(136, 100, 255, 0.1), rgba(255, 100, 200, 0.1));
+  border-color: rgba(180, 130, 255, 0.3);
+}
+.experience-btn.story:hover {
+  background: linear-gradient(135deg, rgba(136, 100, 255, 0.2), rgba(255, 100, 200, 0.2));
+  border-color: rgba(180, 130, 255, 0.5);
+}
+
+.experience-btn:focus-visible {
+  outline: 2px solid var(--accent, #88ccff);
+  outline-offset: 2px;
+}
+
+.autopilot-hint {
+  margin-top: 6px;
+  font-size: 10px;
+  color: var(--text-muted, rgba(255, 255, 255, 0.5));
+  font-style: italic;
+  line-height: 1.4;
+  padding: 4px 8px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 6px;
+}
+
+/* ─── Reduced Motion for experience buttons ─── */
+@media (prefers-reduced-motion: reduce) {
+  .experience-btn:hover {
+    transform: none;
+  }
+  .experience-btn.autopilot.active {
+    animation: none;
+  }
+}

@@ -113,6 +113,17 @@ export const STORY_PRESETS: StoryPreset[] = [
     offset: 0.000001,
   },
   {
+    name: 'The Strange Attractor',
+    emoji: '🌀',
+    description: 'The iconic Lorenz butterfly — a shape that never repeats, yet never escapes',
+    system: 'lorenz',
+    params: { sigma: 10, rho: 28, beta: 8 / 3 },
+    trailLength: 4000,
+    speed: 1.5,
+    sideBySide: false,
+    offset: 0.001,
+  },
+  {
     name: 'Edge of Order',
     emoji: '⚖️',
     description: 'Right at the boundary where predictable behavior gives way to chaos',
@@ -124,9 +135,20 @@ export const STORY_PRESETS: StoryPreset[] = [
     offset: 0.001,
   },
   {
+    name: 'The Spiral',
+    emoji: '🌊',
+    description: 'The Rössler attractor — simplicity breeds complexity in this elegant spiral',
+    system: 'rossler',
+    params: { a: 0.2, b: 0.2, c: 5.7 },
+    trailLength: 3500,
+    speed: 1.2,
+    sideBySide: false,
+    offset: 0.001,
+  },
+  {
     name: 'Period Doubling',
     emoji: '🔄',
-    description: 'Watch the Rössler system trace a period-2 orbit — increase c to see the cascade to chaos',
+    description: 'Watch the Rössler system trace a period-2 orbit — the route to chaos begins',
     system: 'rossler',
     params: { a: 0.2, b: 0.2, c: 3.5 },
     trailLength: 3000,
@@ -135,15 +157,26 @@ export const STORY_PRESETS: StoryPreset[] = [
     offset: 0.001,
   },
   {
-    name: 'The Strange Attractor',
-    emoji: '🌀',
-    description: 'The iconic Lorenz butterfly with a long, luminous trail',
-    system: 'lorenz',
-    params: { sigma: 10, rho: 28, beta: 8 / 3 },
-    trailLength: 4000,
-    speed: 1.5,
+    name: 'The Pendulum',
+    emoji: '⚡',
+    description: 'A simple double pendulum — deterministic laws, unpredictable motion',
+    system: 'doublePendulum',
+    params: { mass1: 1, mass2: 1, length1: 1, length2: 1, gravity: 9.81, damping: 0 },
+    trailLength: 2000,
+    speed: 1.0,
     sideBySide: false,
     offset: 0.001,
+  },
+  {
+    name: 'Dual Pendulums',
+    emoji: '🔀',
+    description: 'Two pendulums, almost identical — watch them dance apart',
+    system: 'doublePendulum',
+    params: { mass1: 1, mass2: 1, length1: 1, length2: 1, gravity: 9.81, damping: 0 },
+    trailLength: 1500,
+    speed: 1.0,
+    sideBySide: true,
+    offset: 0.0001,
   },
 ];
 
@@ -213,6 +246,18 @@ export interface AppState {
 
   showParameterSpace: boolean;
   setShowParameterSpace: (show: boolean) => void;
+
+  // Creative features
+  cinematicCamera: boolean;
+  setCinematicCamera: (enabled: boolean) => void;
+
+  chaosAutopilot: boolean;
+  setChaosAutopilot: (enabled: boolean) => void;
+
+  storyMode: boolean;
+  setStoryMode: (active: boolean) => void;
+  currentStoryIndex: number;
+  setCurrentStoryIndex: (index: number) => void;
 }
 
 export const useStore = create<AppState>((set) => ({
@@ -289,6 +334,18 @@ export const useStore = create<AppState>((set) => ({
 
   showParameterSpace: false,
   setShowParameterSpace: (show) => set({ showParameterSpace: show }),
+
+  // Creative features
+  cinematicCamera: false,
+  setCinematicCamera: (enabled) => set({ cinematicCamera: enabled }),
+
+  chaosAutopilot: false,
+  setChaosAutopilot: (enabled) => set({ chaosAutopilot: enabled }),
+
+  storyMode: false,
+  setStoryMode: (active) => set({ storyMode: active }),
+  currentStoryIndex: 0,
+  setCurrentStoryIndex: (index) => set({ currentStoryIndex: index }),
 }));
 
 export const PRESETS: Record<ChaosSystem, SystemPreset[]> = {
