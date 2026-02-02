@@ -47,6 +47,10 @@ export const Controls: React.FC = () => {
     cinematicCamera, setCinematicCamera,
     chaosAutopilot, setChaosAutopilot,
     setStoryMode,
+    bloomEnabled, setBloomEnabled,
+    bloomIntensity, setBloomIntensity,
+    audioEnabled, setAudioEnabled,
+    audioVolume, setAudioVolume,
   } = useStore();
 
   const theme = THEMES[colorTheme];
@@ -302,6 +306,25 @@ export const Controls: React.FC = () => {
                 </label>
               </div>
             )}
+            <div className="checkbox-group">
+              <label>
+                <input
+                  type="checkbox"
+                  checked={bloomEnabled}
+                  aria-label="Toggle bloom glow post-processing effect"
+                  onChange={(e) => setBloomEnabled(e.target.checked)}
+                />
+                ✨ Bloom Glow
+              </label>
+            </div>
+            {bloomEnabled && (
+              <div className="slider-group">
+                <label htmlFor="bloom-intensity">Bloom: {bloomIntensity.toFixed(1)}</label>
+                <input id="bloom-intensity" type="range" min="0.2" max="4.0" step="0.1" value={bloomIntensity}
+                  aria-label={`Bloom intensity: ${bloomIntensity.toFixed(1)}`}
+                  onChange={(e) => setBloomIntensity(parseFloat(e.target.value))} />
+              </div>
+            )}
           </div>
 
           {/* Creative Features */}
@@ -325,6 +348,14 @@ export const Controls: React.FC = () => {
                 🤖 Autopilot
               </button>
               <button
+                className={`experience-btn audio ${audioEnabled ? 'active' : ''}`}
+                onClick={() => setAudioEnabled(!audioEnabled)}
+                aria-pressed={audioEnabled}
+                aria-label="Toggle chaos sonification — hear the attractor as sound"
+              >
+                🔊 Sonify
+              </button>
+              <button
                 className="experience-btn story"
                 onClick={() => {
                   setStoryMode(true);
@@ -335,6 +366,19 @@ export const Controls: React.FC = () => {
                 📖 Story Mode
               </button>
             </div>
+            {audioEnabled && (
+              <div className="audio-controls">
+                <div className="slider-group">
+                  <label htmlFor="audio-volume">Volume: {Math.round(audioVolume * 100)}%</label>
+                  <input id="audio-volume" type="range" min="0" max="1" step="0.05" value={audioVolume}
+                    aria-label={`Audio volume: ${Math.round(audioVolume * 100)}%`}
+                    onChange={(e) => setAudioVolume(parseFloat(e.target.value))} />
+                </div>
+                <div className="autopilot-hint">
+                  🎵 Listening to chaos — pitch follows position, volume follows velocity
+                </div>
+              </div>
+            )}
             {chaosAutopilot && (
               <div className="autopilot-hint">
                 Parameters are morphing through interesting regions...

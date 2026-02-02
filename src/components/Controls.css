@@ -552,6 +552,27 @@
   50% { box-shadow: 0 0 25px rgba(100, 255, 100, 0.25); }
 }
 
+.experience-btn.audio.active {
+  background: rgba(255, 150, 50, 0.12);
+  border-color: #ffaa44;
+  color: #ffcc66;
+  box-shadow: 0 0 15px rgba(255, 150, 50, 0.15);
+  animation: audioPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes audioPulse {
+  0%, 100% { box-shadow: 0 0 15px rgba(255, 150, 50, 0.15); }
+  50% { box-shadow: 0 0 22px rgba(255, 150, 50, 0.3); }
+}
+
+.audio-controls {
+  margin-top: 8px;
+  padding: 8px 10px;
+  background: rgba(255, 150, 50, 0.05);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 150, 50, 0.1);
+}
+
 .experience-btn.story {
   background: linear-gradient(135deg, rgba(136, 100, 255, 0.1), rgba(255, 100, 200, 0.1));
   border-color: rgba(180, 130, 255, 0.3);

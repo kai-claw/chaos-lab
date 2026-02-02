@@ -1,6 +1,7 @@
 import React, { Suspense, useRef, Component, type ReactNode } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Grid } from '@react-three/drei';
+import { EffectComposer, Bloom } from '@react-three/postprocessing';
 import * as THREE from 'three';
 import { LorenzAttractor } from './LorenzAttractor';
 import { RosslerAttractor } from './RosslerAttractor';
@@ -9,6 +10,7 @@ import { Starfield } from './Starfield';
 import { CinematicCamera } from './CinematicCamera';
 import { ChaosAutopilot } from './ChaosAutopilot';
 import { TrailSparkles } from './TrailSparkles';
+import { EnergyPulse } from './EnergyPulse';
 import { useStore, THEMES, type ChaosSystem } from '../store/useStore';
 import type { PendulumState } from '../systems/doublePendulum';
 
@@ -116,6 +118,46 @@ const SystemRenderer: React.FC<SystemRendererProps> = ({
   }
 };
 
+/* ─── dynamic bloom controller ─── */
+const DynamicBloom: React.FC = () => {
+  const { bloomEnabled, bloomIntensity, isPlaying } = useStore();
+  const intensityRef = useRef(bloomIntensity);
+
+  useFrame(() => {
+    if (!bloomEnabled || !isPlaying) return;
+
+    const system = (window as unknown as Record<string, unknown>).__chaosLabSystem as
+      | { points: THREE.Vector3[] }
+      | undefined;
+    if (!system?.points || system.points.length < 5) return;
+
+    const pts = system.points;
+    const head = pts[pts.length - 1];
+    const prev = pts[pts.length - 4];
+    const vx = head.x - prev.x;
+    const vy = head.y - prev.y;
+    const vz = head.z - prev.z;
+    const velocity = Math.sqrt(vx * vx + vy * vy + vz * vz);
+
+    // Pulse bloom with velocity (subtle: ±30% of base intensity)
+    const pulse = 1 + Math.min(velocity * 0.02, 0.3);
+    intensityRef.current += (bloomIntensity * pulse - intensityRef.current) * 0.05;
+  });
+
+  if (!bloomEnabled) return null;
+
+  return (
+    <EffectComposer>
+      <Bloom
+        intensity={intensityRef.current}
+        luminanceThreshold={0.1}
+        luminanceSmoothing={0.9}
+        mipmapBlur
+      />
+    </EffectComposer>
+  );
+};
+
 /* ─── scene content ─── */
 const SceneContent: React.FC = () => {
   const { sideBySideMode, currentSystem, initialOffset, colorTheme } = useStore();
@@ -176,6 +218,8 @@ const SceneContent: React.FC = () => {
       <CinematicCamera />
       <ChaosAutopilot />
       <TrailSparkles />
+      <EnergyPulse />
+      <DynamicBloom />
     </>
   );
 };

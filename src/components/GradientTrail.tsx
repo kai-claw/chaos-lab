@@ -69,8 +69,8 @@ export const GradientTrail: React.FC<GradientTrailProps> = ({
       const t = i / (len - 1);
       const alpha = t * t; // quadratic fade for old end
       const hue = hueStart + (hueEnd - hueStart) * t;
-      const sat = 0.85;
-      const light = 0.35 + alpha * 0.45;
+      const sat = 0.8 + t * 0.2; // saturation ramps up at head
+      const light = 0.3 + alpha * 0.55; // brighter at the head end
 
       // Inline HSL → RGB (avoids creating THREE.Color each iteration)
       const c = (1 - Math.abs(2 * light - 1)) * sat;
@@ -94,9 +94,10 @@ export const GradientTrail: React.FC<GradientTrailProps> = ({
       colorBuffer[idx + 2] = (b + m) * alpha;
 
       const gAlpha = alpha * glowIntensity;
-      glowColorBuffer[idx]     = (r + m) * gAlpha * 1.5;
-      glowColorBuffer[idx + 1] = (g + m) * gAlpha * 1.5;
-      glowColorBuffer[idx + 2] = (b + m) * gAlpha * 1.5;
+      const glowBoost = 1.5 + t * 0.5; // hotter glow near the head
+      glowColorBuffer[idx]     = (r + m) * gAlpha * glowBoost;
+      glowColorBuffer[idx + 1] = (g + m) * gAlpha * glowBoost;
+      glowColorBuffer[idx + 2] = (b + m) * gAlpha * glowBoost;
     }
 
     // Update main geometry
@@ -140,7 +141,7 @@ export const GradientTrail: React.FC<GradientTrailProps> = ({
   const glowMat = useMemo(() => new THREE.LineBasicMaterial({
     vertexColors: true,
     transparent: true,
-    opacity: 0.4,
+    opacity: 0.5,
     depthWrite: false,
     blending: THREE.AdditiveBlending,
   }), []);

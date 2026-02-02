@@ -258,6 +258,18 @@ export interface AppState {
   setStoryMode: (active: boolean) => void;
   currentStoryIndex: number;
   setCurrentStoryIndex: (index: number) => void;
+
+  // Bloom post-processing
+  bloomEnabled: boolean;
+  setBloomEnabled: (enabled: boolean) => void;
+  bloomIntensity: number;
+  setBloomIntensity: (intensity: number) => void;
+
+  // Audio sonification
+  audioEnabled: boolean;
+  setAudioEnabled: (enabled: boolean) => void;
+  audioVolume: number;
+  setAudioVolume: (volume: number) => void;
 }
 
 export const useStore = create<AppState>((set) => ({
@@ -270,7 +282,7 @@ export const useStore = create<AppState>((set) => ({
   speed: 1.0,
   setSpeed: (speed) => set({ speed }),
 
-  trailLength: 1000,
+  trailLength: 2000,
   setTrailLength: (length) => set({ trailLength: length }),
 
   sideBySideMode: false,
@@ -308,7 +320,7 @@ export const useStore = create<AppState>((set) => ({
   showInfoPanel: true,
   setShowInfoPanel: (show) => set({ showInfoPanel: show }),
 
-  autoRotate: false,
+  autoRotate: true,
   setAutoRotate: (rotate) => set({ autoRotate: rotate }),
 
   _resetCounter: 0,
@@ -346,6 +358,18 @@ export const useStore = create<AppState>((set) => ({
   setStoryMode: (active) => set({ storyMode: active }),
   currentStoryIndex: 0,
   setCurrentStoryIndex: (index) => set({ currentStoryIndex: index }),
+
+  // Bloom post-processing
+  bloomEnabled: true,
+  setBloomEnabled: (enabled) => set({ bloomEnabled: enabled }),
+  bloomIntensity: 1.5,
+  setBloomIntensity: (intensity) => set({ bloomIntensity: intensity }),
+
+  // Audio sonification
+  audioEnabled: false,
+  setAudioEnabled: (enabled) => set({ audioEnabled: enabled }),
+  audioVolume: 0.3,
+  setAudioVolume: (volume) => set({ audioVolume: volume }),
 }));
 
 export const PRESETS: Record<ChaosSystem, SystemPreset[]> = {

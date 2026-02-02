@@ -4,6 +4,7 @@ import * as THREE from 'three';
 import { LorenzSystem } from '../systems/lorenz';
 import { useStore, THEMES } from '../store/useStore';
 import { GradientTrail } from './GradientTrail';
+import { TrailHeadGlow } from './TrailHeadGlow';
 
 interface LorenzAttractorProps {
   position?: [number, number, number];
@@ -101,10 +102,13 @@ export const LorenzAttractor: React.FC<LorenzAttractorProps> = ({
       {lorenzSystem.points.length > 0 && (() => {
         const last = lorenzSystem.points[lorenzSystem.points.length - 1];
         return (
-          <mesh position={[last.x * scale, last.y * scale, last.z * scale]}>
-            <sphereGeometry args={[0.04, 12, 12]} />
-            <meshBasicMaterial color={headColor} transparent opacity={0.9} />
-          </mesh>
+          <TrailHeadGlow
+            position={[last.x * scale, last.y * scale, last.z * scale]}
+            color={headColor}
+            lightIntensity={isSecondary ? 0.4 : 0.8}
+            size={0.8}
+            showPulse={!isSecondary}
+          />
         );
       })()}
     </group>

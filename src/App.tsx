@@ -7,6 +7,7 @@ import { DivergenceMeter } from './components/DivergenceMeter';
 import { LyapunovIndicator } from './components/LyapunovIndicator';
 import { HelpOverlay } from './components/HelpOverlay';
 import { StoryMode } from './components/StoryMode';
+import { ChaosSynth } from './components/ChaosSynth';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { useUrlState } from './hooks/useUrlState';
 import { useStore, THEMES } from './store/useStore';
@@ -82,6 +83,7 @@ function App() {
       <HelpOverlay isVisible={showHelp} onClose={toggleHelp} />
       <StoryMode />
       <QuickStart />
+      <ChaosSynth />
 
       {/* Title overlay */}
       <div className="title-overlay" aria-hidden="true">

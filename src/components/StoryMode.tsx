@@ -39,6 +39,10 @@ export const StoryMode: React.FC = () => {
     setCurrentPreset(null);
     setAutoRotate(true);
 
+    // Auto-enable cinematic camera for single-attractor stories (not side-by-side)
+    // This creates an immersive first-person flythrough experience
+    setCinematicCamera(!story.sideBySide);
+
     // Apply system-specific parameters
     switch (story.system) {
       case 'lorenz':
@@ -57,7 +61,7 @@ export const StoryMode: React.FC = () => {
   }, [
     setCurrentSystem, setLorenzParams, setRosslerParams, setDoublePendulumParams,
     setTrailLength, setSpeed, setSideBySideMode, setInitialOffset,
-    setCurrentPreset, setAutoRotate, resetSimulation,
+    setCurrentPreset, setAutoRotate, setCinematicCamera, resetSimulation,
   ]);
 
   /** Advance to next story */

@@ -4,6 +4,7 @@ import * as THREE from 'three';
 import { RosslerSystem } from '../systems/rossler';
 import { useStore, THEMES } from '../store/useStore';
 import { GradientTrail } from './GradientTrail';
+import { TrailHeadGlow } from './TrailHeadGlow';
 
 interface RosslerAttractorProps {
   position?: [number, number, number];
@@ -96,10 +97,13 @@ export const RosslerAttractor: React.FC<RosslerAttractorProps> = ({
       {rosslerSystem.points.length > 0 && (() => {
         const last = rosslerSystem.points[rosslerSystem.points.length - 1];
         return (
-          <mesh position={[last.x * scale, last.y * scale, last.z * scale]}>
-            <sphereGeometry args={[0.05, 12, 12]} />
-            <meshBasicMaterial color={headColor} transparent opacity={0.9} />
-          </mesh>
+          <TrailHeadGlow
+            position={[last.x * scale, last.y * scale, last.z * scale]}
+            color={headColor}
+            lightIntensity={isSecondary ? 0.5 : 1.0}
+            size={1.0}
+            showPulse={!isSecondary}
+          />
         );
       })()}
     </group>

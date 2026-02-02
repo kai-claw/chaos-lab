@@ -4,6 +4,7 @@ import * as THREE from 'three';
 import { DoublePendulumSystem } from '../systems/doublePendulum';
 import { useStore, THEMES } from '../store/useStore';
 import { GradientTrail } from './GradientTrail';
+import { TrailHeadGlow } from './TrailHeadGlow';
 
 interface DoublePendulumProps {
   position?: [number, number, number];
@@ -136,17 +137,20 @@ export const DoublePendulum: React.FC<DoublePendulumProps> = ({
         <meshBasicMaterial color="#ffffff" transparent opacity={0.7} />
       </mesh>
 
-      {/* Mass 1 */}
+      {/* Mass 1 — inner bob */}
       <mesh position={[rod1End[0], rod1End[1], rod1End[2]]}>
         <sphereGeometry args={[0.06 * Math.sqrt(doublePendulumParams.mass1), 16, 16]} />
         <meshBasicMaterial color={mass1Color} />
       </mesh>
 
-      {/* Mass 2 */}
-      <mesh position={[rod2End[0], rod2End[1], rod2End[2]]}>
-        <sphereGeometry args={[0.06 * Math.sqrt(doublePendulumParams.mass2), 16, 16]} />
-        <meshBasicMaterial color={mass2Color} />
-      </mesh>
+      {/* Mass 2 — tip with glow (this is where the trail draws) */}
+      <TrailHeadGlow
+        position={[rod2End[0], rod2End[1], rod2End[2]]}
+        color={mass2Color}
+        lightIntensity={isSecondary ? 0.3 : 0.6}
+        size={0.8 * Math.sqrt(doublePendulumParams.mass2)}
+        showPulse={!isSecondary}
+      />
     </group>
   );
 };
