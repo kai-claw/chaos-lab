@@ -2,6 +2,7 @@ import { useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { useStore, THEMES } from '../store/useStore';
+import { systemRef } from '../store/systemRef';
 
 /**
  * Energy Pulse — a dynamic point light that follows the trail head.
@@ -36,9 +37,7 @@ export const EnergyPulse: React.FC = () => {
   useFrame(() => {
     if (!isPlaying || !lightRef.current || !meshRef.current) return;
 
-    const system = (window as unknown as Record<string, unknown>).__chaosLabSystem as
-      | { points: THREE.Vector3[] }
-      | undefined;
+    const system = systemRef.system;
     if (!system?.points || system.points.length < 3) return;
 
     const pts = system.points;

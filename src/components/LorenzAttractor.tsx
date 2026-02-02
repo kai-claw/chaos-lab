@@ -3,6 +3,7 @@ import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { LorenzSystem } from '../systems/lorenz';
 import { useStore, THEMES } from '../store/useStore';
+import { setActiveSystem, clearActiveSystem } from '../store/systemRef';
 import { GradientTrail } from './GradientTrail';
 import { TrailHeadGlow } from './TrailHeadGlow';
 
@@ -48,15 +49,14 @@ export const LorenzAttractor: React.FC<LorenzAttractorProps> = ({
   const systemRef = useRef(lorenzSystem);
   systemRef.current = lorenzSystem;
 
-  // Store system on window for Poincaré access (only primary)
+  // Register as the active system (only primary, for per-frame readers)
   useEffect(() => {
     if (!isSecondary) {
-      (window as any).__chaosLabSystem = lorenzSystem;
-      (window as any).__chaosLabSystemType = 'lorenz';
+      setActiveSystem(lorenzSystem, 'lorenz');
     }
     return () => {
-      if (!isSecondary && (window as any).__chaosLabSystem === lorenzSystem) {
-        (window as any).__chaosLabSystem = null;
+      if (!isSecondary) {
+        clearActiveSystem(lorenzSystem);
       }
     };
   }, [lorenzSystem, isSecondary]);

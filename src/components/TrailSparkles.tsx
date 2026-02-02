@@ -2,6 +2,7 @@ import { useRef, useMemo, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { useStore, THEMES } from '../store/useStore';
+import { systemRef } from '../store/systemRef';
 
 /**
  * Trail Sparkles — comet-like particle effect at the trail head.
@@ -65,9 +66,7 @@ export const TrailSparkles: React.FC = () => {
   useFrame(() => {
     if (!isPlaying || !pointsRef.current) return;
 
-    const system = (window as unknown as Record<string, unknown>).__chaosLabSystem as
-      | { points: THREE.Vector3[] }
-      | undefined;
+    const system = systemRef.system;
     if (!system?.points || system.points.length < 3) return;
 
     const pts = system.points;

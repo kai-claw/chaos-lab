@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useCallback } from 'react';
 import { useStore, THEMES } from '../store/useStore';
+import { systemRef } from '../store/systemRef';
 import './PoincareSection.css';
 
 const CANVAS_W = 500;
@@ -31,8 +32,8 @@ export const PoincareSection: React.FC = () => {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const system = (window as any).__chaosLabSystem;
-    if (!system || !system.poincarePoints) return;
+    const system = systemRef.system;
+    if (!system?.poincarePoints) return;
 
     const points: [number, number][] = system.poincarePoints;
 

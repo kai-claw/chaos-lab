@@ -1,5 +1,6 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { useStore } from '../store/useStore';
+import { systemRef } from '../store/systemRef';
 
 /**
  * Chaos Sonification — hear the mathematics of chaos.
@@ -169,18 +170,16 @@ export const ChaosSynth: React.FC = () => {
 
     if (!ctx || !osc1 || !osc2 || !gain || !filter) return;
 
-    const system = (window as unknown as Record<string, unknown>).__chaosLabSystem as
-      | { points: { x: number; y: number; z: number }[] }
-      | undefined;
+    const activeSystem = systemRef.system;
 
-    if (!system?.points || system.points.length < 5) {
+    if (!activeSystem?.points || activeSystem.points.length < 5) {
       gain.gain.setTargetAtTime(0, ctx.currentTime, 0.1);
       animFrameRef.current = requestAnimationFrame(updateAudio);
       return;
     }
 
-    const systemType = (window as unknown as Record<string, string>).__chaosLabSystemType || 'lorenz';
-    const pts = system.points;
+    const systemType = systemRef.type || 'lorenz';
+    const pts = activeSystem.points;
     const head = pts[pts.length - 1];
     const ranges = SCALE_MAP[systemType] || SCALE_MAP.lorenz;
 

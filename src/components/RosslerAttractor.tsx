@@ -3,6 +3,7 @@ import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { RosslerSystem } from '../systems/rossler';
 import { useStore, THEMES } from '../store/useStore';
+import { setActiveSystem, clearActiveSystem } from '../store/systemRef';
 import { GradientTrail } from './GradientTrail';
 import { TrailHeadGlow } from './TrailHeadGlow';
 
@@ -44,15 +45,14 @@ export const RosslerAttractor: React.FC<RosslerAttractorProps> = ({
     rosslerSystem.updateParams(rosslerParams);
   }, [rosslerParams, rosslerSystem]);
 
-  // Expose system for Poincaré access
+  // Register as the active system (only primary, for per-frame readers)
   useEffect(() => {
     if (!isSecondary) {
-      (window as any).__chaosLabSystem = rosslerSystem;
-      (window as any).__chaosLabSystemType = 'rossler';
+      setActiveSystem(rosslerSystem, 'rossler');
     }
     return () => {
-      if (!isSecondary && (window as any).__chaosLabSystem === rosslerSystem) {
-        (window as any).__chaosLabSystem = null;
+      if (!isSecondary) {
+        clearActiveSystem(rosslerSystem);
       }
     };
   }, [rosslerSystem, isSecondary]);

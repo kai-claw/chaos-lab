@@ -12,6 +12,7 @@ import { ChaosAutopilot } from './ChaosAutopilot';
 import { TrailSparkles } from './TrailSparkles';
 import { EnergyPulse } from './EnergyPulse';
 import { useStore, THEMES, type ChaosSystem } from '../store/useStore';
+import { systemRef } from '../store/systemRef';
 import type { PendulumState } from '../systems/doublePendulum';
 
 /* ─── Types for initial conditions ─── */
@@ -121,22 +122,18 @@ const SystemRenderer: React.FC<SystemRendererProps> = ({
 /* ─── dynamic bloom controller ─── */
 const DynamicBloom: React.FC = () => {
   const { bloomEnabled, bloomIntensity, isPlaying } = useStore();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const bloomRef = useRef<any>(null);
+  const bloomRef = useRef<{ intensity: number } | null>(null);
   const smoothIntensity = useRef(bloomIntensity);
 
   useFrame(() => {
     if (!bloomEnabled || !bloomRef.current) return;
 
     if (!isPlaying) {
-      // Static intensity when paused
       bloomRef.current.intensity = bloomIntensity;
       return;
     }
 
-    const system = (window as unknown as Record<string, unknown>).__chaosLabSystem as
-      | { points: THREE.Vector3[] }
-      | undefined;
+    const system = systemRef.system;
     if (!system?.points || system.points.length < 5) {
       bloomRef.current.intensity = bloomIntensity;
       return;

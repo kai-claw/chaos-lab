@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { useStore } from '../store/useStore';
+import { systemRef } from '../store/systemRef';
 
 /**
  * Cinematic Chase Camera — follows the trail head through the attractor.
@@ -69,9 +70,7 @@ export const CinematicCamera: React.FC = () => {
       return;
     }
 
-    const system = (window as unknown as Record<string, unknown>).__chaosLabSystem as
-      | { points: THREE.Vector3[] }
-      | undefined;
+    const system = systemRef.system;
     if (!system?.points || system.points.length < VELOCITY_LOOKBACK + 5) return;
 
     const pts = system.points;

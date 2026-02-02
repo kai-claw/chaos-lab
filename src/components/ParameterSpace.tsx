@@ -57,8 +57,10 @@ export const ParameterSpace: React.FC = () => {
 
   const computeMap = useCallback(() => {
     const canvas = canvasRef.current;
-    const config = getConfig();
-    if (!canvas || !config) return;
+    const cfg = getConfig();
+    if (!canvas || !cfg) return;
+    // Capture non-null config so TypeScript narrows inside the closure below
+    const config = cfg;
     const maybeCtx = canvas.getContext('2d');
     if (!maybeCtx) return;
     const ctx: CanvasRenderingContext2D = maybeCtx;
@@ -193,7 +195,7 @@ export const ParameterSpace: React.FC = () => {
     computeBatch();
   }, [currentSystem, getConfig]);
 
-  const drawLabels = (ctx: CanvasRenderingContext2D, W: number, H: number, config: any) => {
+  const drawLabels = (ctx: CanvasRenderingContext2D, W: number, H: number, config: NonNullable<ReturnType<typeof getConfig>>) => {
     ctx.fillStyle = 'rgba(255,255,255,0.4)';
     ctx.font = '10px system-ui, sans-serif';
     ctx.textAlign = 'center';

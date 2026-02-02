@@ -3,6 +3,7 @@ import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { DoublePendulumSystem } from '../systems/doublePendulum';
 import { useStore, THEMES } from '../store/useStore';
+import { setActiveSystem, clearActiveSystem } from '../store/systemRef';
 import { GradientTrail } from './GradientTrail';
 import { TrailHeadGlow } from './TrailHeadGlow';
 
@@ -49,15 +50,14 @@ export const DoublePendulum: React.FC<DoublePendulumProps> = ({
     pendulumSystem.updateParams(doublePendulumParams);
   }, [doublePendulumParams, pendulumSystem]);
 
-  // Expose system for Poincaré access
+  // Register as the active system (only primary, for per-frame readers)
   useEffect(() => {
     if (!isSecondary) {
-      (window as any).__chaosLabSystem = pendulumSystem;
-      (window as any).__chaosLabSystemType = 'doublePendulum';
+      setActiveSystem(pendulumSystem, 'doublePendulum');
     }
     return () => {
-      if (!isSecondary && (window as any).__chaosLabSystem === pendulumSystem) {
-        (window as any).__chaosLabSystem = null;
+      if (!isSecondary) {
+        clearActiveSystem(pendulumSystem);
       }
     };
   }, [pendulumSystem, isSecondary]);
