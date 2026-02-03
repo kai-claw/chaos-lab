@@ -146,13 +146,16 @@ export const GradientTrail: React.FC<GradientTrailProps> = ({
     blending: THREE.AdditiveBlending,
   }), []);
 
+  const mainLine = useMemo(() => new THREE.Line(), []);
+  const glowLine = useMemo(() => new THREE.Line(), []);
+
   return (
     <>
-      <primitive object={new THREE.Line()} ref={lineRef}>
+      <primitive object={mainLine} ref={lineRef}>
         <bufferGeometry ref={geometryRef} />
         <primitive object={mainMat} attach="material" />
       </primitive>
-      <primitive object={new THREE.Line()} ref={glowRef}>
+      <primitive object={glowLine} ref={glowRef}>
         <bufferGeometry ref={glowGeometryRef} />
         <primitive object={glowMat} attach="material" />
       </primitive>

@@ -75,8 +75,10 @@ const GhostLine: React.FC<{ ghost: GhostTrail; index: number; total: number }> =
     [],
   );
 
+  const line = useMemo(() => new THREE.Line(), []);
+
   return (
-    <primitive object={new THREE.Line()}>
+    <primitive object={line}>
       <bufferGeometry ref={geoRef} />
       <primitive object={material} attach="material" />
     </primitive>
